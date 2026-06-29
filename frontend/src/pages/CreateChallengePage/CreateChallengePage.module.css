@@ -1,0 +1,34 @@
+.controlBlock {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.controlItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.controlItem .input {
+  flex: 1;
+}
+
+.ok {
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.ko {
+  color: var(--danger);
+  font-family: var(--font-mono);
+}
+
+.validHint {
+  display: block;
+  color: var(--accent);
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+  font-family: var(--font-mono);
+}

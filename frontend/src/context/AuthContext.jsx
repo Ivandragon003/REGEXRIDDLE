@@ -1,4 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { setUnauthorizedHandler } from '../api'
 
 export const AuthContext = createContext(null)
@@ -13,6 +14,7 @@ function readStoredUser() {
 }
 
 export function AuthProvider({ children }) {
+  const queryClient = useQueryClient()
   const [token, setToken] = useState(() => localStorage.getItem('token'))
   const [user, setUser] = useState(readStoredUser)
 
@@ -28,7 +30,10 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user')
     setToken(null)
     setUser(null)
-  }, [])
+    // Evita che i dati in cache di un utente restino visibili al successivo
+    // accesso (profilo, tentativi, sfide risolte) nello stesso browser.
+    queryClient.clear()
+  }, [queryClient])
 
   // Aggiorna i dati utente locali (es. dopo cambio username/avatar).
   const updateUser = useCallback((patch) => {

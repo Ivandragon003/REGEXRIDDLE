@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { challengesAPI, errorMessage } from '../../api'
@@ -56,10 +56,20 @@ export default function ChallengeDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['attempts', id] })
       queryClient.invalidateQueries({ queryKey: ['challenge', id] })
       queryClient.invalidateQueries({ queryKey: ['challenges'] })
+      queryClient.invalidateQueries({ queryKey: ['solved-challenges'] })
       queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
       queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
+
+  // Cambiando sfida (route /sfide/:id) azzera input e risultato del tentativo
+  // precedente: il componente viene riusato e lo stato locale non si resetta da sé.
+  useEffect(() => {
+    setRegex('')
+    setClientError('')
+    mutation.reset()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   const handleSubmit = (e) => {
     e.preventDefault()

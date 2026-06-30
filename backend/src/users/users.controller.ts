@@ -41,7 +41,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  // Limite di 2 MB: evita di bufferizzare in memoria upload di dimensioni arbitrarie.
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }))
   @ApiOperation({ summary: 'Carica l\'immagine avatar dell\'utente autenticato' })
   uploadAvatar(
     @UploadedFile() file: Express.Multer.File,

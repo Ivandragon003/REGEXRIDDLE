@@ -84,7 +84,7 @@ export class ChallengesService {
       },
       include: { author: true },
     });
-    return this.toPublicDto(challenge);
+    return this.toPublicDto(challenge, 0, 0);
   }
 
   async findAll(): Promise<ChallengePublicDto[]> {
@@ -92,12 +92,14 @@ export class ChallengesService {
       orderBy: { createdAt: 'desc' },
       include: { author: true },
     });
-    return Promise.all(list.map((c) => this.toPublicDto(c)));
+    return this.toPublicDtoList(list);
   }
 
   async findOnePublic(id: number): Promise<ChallengePublicDto> {
     const challenge = await this.requireChallenge(id);
-    return this.toPublicDto(challenge);
+    const counts = await this.countsFor([id]);
+    const c = counts.get(id);
+    return this.toPublicDto(challenge, c?.total ?? 0, c?.solved ?? 0);
   }
 
   async findMine(userId: number): Promise<ChallengePublicDto[]> {
@@ -106,7 +108,7 @@ export class ChallengesService {
       orderBy: { createdAt: 'desc' },
       include: { author: true },
     });
-    return Promise.all(list.map((c) => this.toPublicDto(c)));
+    return this.toPublicDtoList(list);
   }
 
   async evaluateAttempt(
@@ -183,11 +185,57 @@ export class ChallengesService {
     return challenge;
   }
 
-  private async toPublicDto(c: ChallengeWithAuthor): Promise<ChallengePublicDto> {
-    const totalAttempts = await this.prisma.attempt.count({ where: { challengeId: c.id } });
-    const solvedByCount = await this.prisma.attempt.count({
-      where: { challengeId: c.id, solved: true },
+  /**
+   * Mappa una lista di sfide nei rispettivi DTO pubblici aggregando i conteggi
+   * dei tentativi con un numero costante di query (anziché 2 per sfida).
+   */
+  private async toPublicDtoList(list: ChallengeWithAuthor[]): Promise<ChallengePublicDto[]> {
+    const counts = await this.countsFor(list.map((c) => c.id));
+    return list.map((c) => {
+      const k = counts.get(c.id);
+      return this.toPublicDto(c, k?.total ?? 0, k?.solved ?? 0);
     });
+  }
+
+  /**
+   * Conteggi (totali e risolutivi) dei tentativi per le sfide indicate, calcolati
+   * lato database con due sole query di aggregazione (GROUP BY) indipendentemente
+   * dal numero di sfide.
+   */
+  private async countsFor(
+    challengeIds: number[],
+  ): Promise<Map<number, { total: number; solved: number }>> {
+    const map = new Map<number, { total: number; solved: number }>();
+    if (challengeIds.length === 0) return map;
+    for (const id of challengeIds) map.set(id, { total: 0, solved: 0 });
+
+    const totals = await this.prisma.attempt.groupBy({
+      by: ['challengeId'],
+      where: { challengeId: { in: challengeIds } },
+      _count: { _all: true },
+    });
+    for (const t of totals) {
+      const entry = map.get(t.challengeId);
+      if (entry) entry.total = t._count._all;
+    }
+
+    const solved = await this.prisma.attempt.groupBy({
+      by: ['challengeId'],
+      where: { challengeId: { in: challengeIds }, solved: true },
+      _count: { _all: true },
+    });
+    for (const s of solved) {
+      const entry = map.get(s.challengeId);
+      if (entry) entry.solved = s._count._all;
+    }
+    return map;
+  }
+
+  private toPublicDto(
+    c: ChallengeWithAuthor,
+    totalAttempts: number,
+    solvedByCount: number,
+  ): ChallengePublicDto {
     return {
       id: c.id,
       title: c.title,

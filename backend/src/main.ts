@@ -19,9 +19,14 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Validazione automatica dei DTO
+  // Validazione automatica dei DTO: rimuove i campi non previsti (whitelist) e
+  // rifiuta con 400 le richieste che ne contengono (forbidNonWhitelisted).
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
   );
 
   // Risposte di errore in formato { error, status }

@@ -35,6 +35,7 @@ model Challenge {
   createdAt              DateTime  @default(now())
   attempts               Attempt[]
 
+  @@index([authorId])
   @@map("challenges")
 }
 
@@ -52,5 +53,10 @@ model Attempt {
   solved          Boolean
   attemptedAt     DateTime  @default(now())
 
+  // Indici a supporto delle aggregazioni (conteggi per sfida, statistiche e
+  // classifica per utente, lookup delle sfide risolte).
+  @@index([challengeId])
+  @@index([userId])
+  @@index([userId, solved])
   @@map("attempts")
 }

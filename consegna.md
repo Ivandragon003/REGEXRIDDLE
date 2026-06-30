@@ -6,7 +6,7 @@
 | Cognome | [DA COMPILARE] |
 | Matricola | [DA COMPILARE] |
 | Traccia scelta | D — WebTech's RegexRiddle |
-| Backend | Node.js + NestJS (TypeScript) + TypeORM + Passport JWT |
+| Backend | Node.js + NestJS (TypeScript) + Prisma ORM + Passport JWT |
 | Frontend | React 18 + Vite + react-router-dom + axios |
 | Database | PostgreSQL 17 |
 | Test E2E | Playwright |

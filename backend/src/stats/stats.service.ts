@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Attempt } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface UserStats {
@@ -9,37 +8,38 @@ export interface UserStats {
 }
 
 /**
- * Calcola le statistiche di un utente a partire dai suoi tentativi.
+ * Calcola le statistiche di un utente.
  * avgAttempts = media, sulle sole sfide risolte, del numero totale di tentativi
  * effettuati su ciascuna sfida (inclusi quelli falliti).
+ *
+ * I conteggi sono delegati al database (COUNT / GROUP BY) per evitare di caricare
+ * in memoria l'intero storico dei tentativi.
  */
 @Injectable()
 export class StatsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async computeFor(userId: number): Promise<UserStats> {
-    const attempts = await this.prisma.attempt.findMany({ where: { userId } });
-    return StatsService.aggregate(attempts);
-  }
+    const totalAttempts = await this.prisma.attempt.count({ where: { userId } });
 
-  static aggregate(attempts: Attempt[]): UserStats {
-    const totalAttempts = attempts.length;
-
-    const byChallenge = new Map<number, Attempt[]>();
-    for (const a of attempts) {
-      const list = byChallenge.get(a.challengeId) ?? [];
-      list.push(a);
-      byChallenge.set(a.challengeId, list);
-    }
-
-    const solvedGroups = [...byChallenge.values()].filter((group) =>
-      group.some((a) => a.solved),
-    );
-    const solvedCount = solvedGroups.length;
+    // Sfide risolte dall'utente (distinte): una riga per ogni sfida con almeno
+    // un tentativo risolutivo.
+    const solvedChallenges = await this.prisma.attempt.groupBy({
+      by: ['challengeId'],
+      where: { userId, solved: true },
+    });
+    const solvedIds = solvedChallenges.map((r) => r.challengeId);
+    const solvedCount = solvedIds.length;
 
     let avgAttempts = 0;
     if (solvedCount > 0) {
-      const sum = solvedGroups.reduce((acc, g) => acc + g.length, 0);
+      // Totale tentativi dell'utente su ciascuna sfida risolta.
+      const perChallenge = await this.prisma.attempt.groupBy({
+        by: ['challengeId'],
+        where: { userId, challengeId: { in: solvedIds } },
+        _count: { _all: true },
+      });
+      const sum = perChallenge.reduce((acc, r) => acc + r._count._all, 0);
       avgAttempts = sum / solvedCount;
     }
 

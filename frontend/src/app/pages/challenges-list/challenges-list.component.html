@@ -77,8 +77,8 @@
       </div>
     </div>
 
-    <div class="center" *ngIf="isLoading()">
-      <div class="spinner"></div>
+    <div class="grid" *ngIf="isLoading()">
+      <div class="skeleton skeletonCard" *ngFor="let s of skeletons"></div>
     </div>
 
     <div class="alert alert-error" *ngIf="isError()">

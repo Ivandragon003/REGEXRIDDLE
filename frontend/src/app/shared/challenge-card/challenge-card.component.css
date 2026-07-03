@@ -14,8 +14,8 @@
 .tag {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: var(--accent);
-  background: var(--accent-tint);
+  color: var(--accent2);
+  background: var(--accent2-tint);
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
 }

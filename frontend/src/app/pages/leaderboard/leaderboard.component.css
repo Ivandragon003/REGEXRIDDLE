@@ -55,15 +55,15 @@
   margin-left: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--accent2);
+  border: 1px solid var(--accent2);
   border-radius: 999px;
   padding: 0.1rem 0.45rem;
 }
 
 .me {
-  background: var(--accent-tint-weak);
-  box-shadow: inset 3px 0 0 var(--accent);
+  background: var(--accent2-tint);
+  box-shadow: inset 3px 0 0 var(--accent2);
 }
 
 .skeletonWrap {
@@ -74,14 +74,4 @@
 
 .skeleton {
   height: 56px;
-  border-radius: var(--radius);
-  background: linear-gradient(90deg, var(--bg-card), var(--bg-secondary), var(--bg-card));
-  background-size: 200% 100%;
-  animation: shimmer 1.3s infinite;
-}
-
-@keyframes shimmer {
-  to {
-    background-position: -200% 0;
-  }
 }

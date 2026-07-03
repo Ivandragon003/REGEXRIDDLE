@@ -67,14 +67,14 @@
 }
 
 .chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent2);
+  color: var(--accent2);
 }
 
 .chipActive {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-tint);
+  border-color: var(--accent2);
+  color: var(--accent2);
+  background: var(--accent2-tint);
 }
 
 .grid {
@@ -84,10 +84,8 @@
   gap: 1.25rem;
 }
 
-.center {
-  display: flex;
-  justify-content: center;
-  padding: 3rem 0;
+.skeletonCard {
+  height: 190px;
 }
 
 .empty {

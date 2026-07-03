@@ -31,6 +31,7 @@ export class ChallengesListComponent {
 
   sortKeys = Object.keys(SORTS) as SortKey[];
   sortLabel = (key: SortKey) => SORTS[key].label;
+  skeletons = Array.from({ length: 6 });
 
   search = signal('');
   sort = signal<SortKey>('recent');

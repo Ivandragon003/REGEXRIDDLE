@@ -1,0 +1,82 @@
+<main class="page">
+  <div class="container">
+    <header class="page-header header">
+      <div>
+        <h1 class="page-title">Sfide</h1>
+        <p class="page-subtitle">Scegli un enigma e prova a indovinare la regex segreta.</p>
+      </div>
+      <a *ngIf="auth.isAuthenticated()" routerLink="/sfide/nuova" class="btn btn-primary">
+        + Nuova sfida
+      </a>
+    </header>
+
+    <div class="toolbar">
+      <input
+        class="input"
+        type="search"
+        placeholder="Cerca per titolo..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        aria-label="Cerca sfide per titolo"
+      />
+
+      <label class="sortField">
+        <span class="muted">Ordina:</span>
+        <select
+          class="input"
+          [ngModel]="sort()"
+          (ngModelChange)="sort.set($event)"
+          aria-label="Ordina le sfide"
+        >
+          <option *ngFor="let key of sortKeys" [value]="key">{{ sortLabel(key) }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="chips" *ngIf="auth.isAuthenticated()">
+      <div class="chipGroup">
+        <button
+          type="button"
+          class="chip"
+          [class.chipActive]="onlyMine()"
+          (click)="toggleOnlyMine()"
+          [attr.aria-pressed]="onlyMine()"
+        >
+          Solo le mie
+        </button>
+      </div>
+      <span class="chipDivider" aria-hidden="true"></span>
+      <div class="chipGroup">
+        <button
+          type="button"
+          class="chip"
+          [class.chipActive]="hideSolved()"
+          (click)="toggleHideSolved()"
+          [attr.aria-pressed]="hideSolved()"
+        >
+          Nascondi già risolte
+        </button>
+      </div>
+    </div>
+
+    <div class="center" *ngIf="isLoading()">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="alert alert-error" *ngIf="isError()">
+      Impossibile caricare le sfide. Riprova più tardi.
+    </div>
+
+    <div class="alert alert-info empty" *ngIf="!isLoading() && !isError() && filtered().length === 0">
+      {{
+        challenges() && challenges()!.length > 0
+          ? 'Nessuna sfida corrisponde ai filtri selezionati.'
+          : 'Ancora nessuna sfida pubblicata. Sii il primo a crearne una!'
+      }}
+    </div>
+
+    <div class="grid" *ngIf="!isLoading() && !isError() && filtered().length > 0">
+      <app-challenge-card *ngFor="let c of filtered()" [challenge]="c" />
+    </div>
+  </div>
+</main>

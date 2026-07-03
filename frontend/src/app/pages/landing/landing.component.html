@@ -1,0 +1,29 @@
+<main class="page">
+  <section class="container hero">
+    <p class="kicker">// WebTech's RegexRiddle</p>
+    <h1 class="title">
+      Indovina la <span class="accent">regex</span>
+      <span class="cursor-blink"></span>
+    </h1>
+    <p class="subtitle">
+      Sfida i tuoi colleghi. Crea enigmi basati su espressioni regolari e mettiti alla prova
+      per scoprire il pattern segreto.
+    </p>
+    <div class="ctas">
+      <a routerLink="/sfide" class="btn btn-primary">Esplora le sfide</a>
+      <a routerLink="/come-funziona" class="btn btn-ghost">Come funziona</a>
+    </div>
+
+    <pre class="terminal" aria-hidden="true">{{ terminal }}</pre>
+  </section>
+
+  <section class="container featuresWrap">
+    <div class="features">
+      <div class="card card-hover feature" *ngFor="let f of features">
+        <span class="featureIcon">{{ f.icon }}</span>
+        <h3>{{ f.title }}</h3>
+        <p class="muted">{{ f.text }}</p>
+      </div>
+    </div>
+  </section>
+</main>

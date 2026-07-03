@@ -1,0 +1,17 @@
+<div class="app-shell">
+  <ng-container *ngIf="!errorState.hasError(); else errorFallback">
+    <app-navbar></app-navbar>
+    <router-outlet></router-outlet>
+  </ng-container>
+  <ng-template #errorFallback>
+    <main class="page">
+      <div class="container text-center" style="padding-top: 4rem">
+        <h1 class="accent" style="font-size: 2.5rem; margin: 0">Qualcosa è andato storto</h1>
+        <p class="muted" style="margin: 1rem 0 2rem">
+          Si è verificato un errore imprevisto durante il caricamento di questa pagina.
+        </p>
+        <button type="button" class="btn btn-primary" (click)="reset()">Torna alla home</button>
+      </div>
+    </main>
+  </ng-template>
+</div>

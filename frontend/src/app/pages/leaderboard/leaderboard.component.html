@@ -1,0 +1,49 @@
+<main class="page">
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Classifica</h1>
+      <p class="page-subtitle">
+        Ordinata per sfide risolte e, a parità, per minor numero medio di tentativi.
+      </p>
+    </header>
+
+    <div class="skeletonWrap" *ngIf="isLoading()">
+      <div class="skeleton" *ngFor="let s of skeletons"></div>
+    </div>
+
+    <div class="alert alert-error" *ngIf="isError()">Impossibile caricare la classifica.</div>
+
+    <div class="alert alert-info text-center" *ngIf="!isLoading() && !isError() && data() && data()!.length === 0">
+      Ancora nessuno in classifica. Risolvi una sfida per primo!
+    </div>
+
+    <div class="tableWrap" *ngIf="!isLoading() && !isError() && data() && data()!.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Utente</th>
+            <th class="num">Risolte</th>
+            <th class="num">Media tentativi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of data()" [class.me]="isMe(entry.username)">
+            <td class="rank">{{ medal(entry.rank) }}</td>
+            <td>
+              <div class="userCell">
+                <app-avatar [username]="entry.username" [avatarUrl]="entry.avatarUrl" [size]="32" />
+                <span>
+                  {{ entry.username }}
+                  <span class="youTag" *ngIf="isMe(entry.username)">tu</span>
+                </span>
+              </div>
+            </td>
+            <td class="num mono">{{ entry.solvedCount }}</td>
+            <td class="num mono">{{ (entry.avgAttempts ?? 0).toFixed(1) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>

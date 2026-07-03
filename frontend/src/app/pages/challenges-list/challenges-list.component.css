@@ -1,0 +1,95 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.toolbar > .input {
+  flex: 1;
+  min-width: 220px;
+  max-width: 420px;
+}
+
+.sortField {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.sortField select {
+  width: auto;
+  cursor: pointer;
+}
+
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.chipGroup {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* Separa visivamente i due filtri (autore vs. stato) per non farli sembrare
+   un'unica sequenza di opzioni mutuamente esclusive. */
+.chipDivider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.chipActive {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.grid {
+  display: grid;
+  /* Numero di colonne fluido in base alla larghezza, senza salti bruschi. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.empty {
+  text-align: center;
+}

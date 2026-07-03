@@ -1,0 +1,15 @@
+<a [routerLink]="['/sfide', challenge.id]" class="card card-hover">
+  <div class="head">
+    <span class="tag">/regex/</span>
+    <span class="muted" style="font-size: 0.8rem">{{ formatDate(challenge.createdAt) }}</span>
+  </div>
+  <h3 class="title">{{ challenge.title }}</h3>
+  <p class="desc" *ngIf="challenge.description">{{ challenge.description }}</p>
+  <div class="meta">
+    <span class="muted">di <strong class="accent">{{ challenge.authorUsername }}</strong></span>
+  </div>
+  <div class="stats">
+    <span>🎯 {{ challenge.totalAttempts }} tentativi</span>
+    <span>✅ {{ challenge.solvedByCount }} risolta</span>
+  </div>
+</a>

@@ -1,0 +1,69 @@
+<main class="page">
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Come funziona</h1>
+      <p class="page-subtitle">
+        RegexRiddle è un gioco di deduzione: indovina il pattern segreto osservandone il
+        comportamento.
+      </p>
+    </header>
+
+    <section class="steps">
+      <div class="card step" *ngFor="let s of steps">
+        <span class="stepNumber">{{ s.n }}</span>
+        <div>
+          <h3>{{ s.title }}</h3>
+          <p class="muted">{{ s.text }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card demo">
+      <h2>Esempio interattivo</h2>
+      <p class="muted">
+        Regex di esempio: <code class="accent">{{ demoRegex }}</code> (solo lettere minuscole)
+      </p>
+
+      <div class="examples">
+        <span class="badge badge-success">✓ Soddisfa: <code>hello</code></span>
+        <span class="badge badge-danger">✗ Non soddisfa: <code>Hello123</code></span>
+      </div>
+
+      <label class="label" for="demo-input">
+        Prova tu: scrivi una stringa e guarda se soddisfa la regex
+      </label>
+      <input
+        id="demo-input"
+        class="input mono"
+        placeholder="scrivi qui..."
+        [ngModel]="input()"
+        (ngModelChange)="onInputChange($event)"
+      />
+      <p class="demoResult" *ngIf="input()">
+        <span class="badge badge-success" *ngIf="matches">✓ "{{ input() }}" soddisfa la regex</span>
+        <span class="badge badge-danger" *ngIf="!matches">✗ "{{ input() }}" non soddisfa la regex</span>
+      </p>
+    </section>
+
+    <section class="card scoring">
+      <h2>Le stringhe di controllo</h2>
+      <p class="muted">
+        Sono l'elemento chiave: stringhe segrete che l'autore sa essere positive
+        (devono soddisfare la regex) o negative (non devono soddisfarla). Dopo ogni tentativo
+        vedi due contatori:
+      </p>
+      <ul class="list">
+        <li>
+          <strong class="accent">Positive soddisfatte</strong> — quante stringhe positive la
+          tua regex riconosce correttamente.
+        </li>
+        <li>
+          <strong class="accent">Negative escluse</strong> — quante stringhe negative la tua
+          regex correttamente rifiuta.
+        </li>
+      </ul>
+      <p class="muted">Quando entrambi i contatori sono al massimo, la sfida è risolta.</p>
+      <a routerLink="/sfide" class="btn btn-primary">Inizia a giocare</a>
+    </section>
+  </div>
+</main>

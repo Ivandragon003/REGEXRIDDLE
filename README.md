@@ -10,7 +10,7 @@ numero di stringhe di controllo positive soddisfatte e negative correttamente es
 ## Stack tecnologico
 
 - **Backend**: Node.js + NestJS (TypeScript), Prisma ORM, Passport JWT, class-validator
-- **Frontend**: React 18 + Vite, react-router-dom, axios, @tanstack/react-query, react-hook-form
+- **Frontend**: Angular 18 (standalone components), Angular Router, Reactive Forms, HttpClient
 - **Database**: PostgreSQL 17
 - **Containerizzazione**: Docker + Docker Compose
 - **Test E2E**: Playwright
@@ -73,7 +73,7 @@ Backend disponibile su http://localhost:8080
 ```bash
 cd frontend
 npm install
-npm run dev
+npm start
 ```
 Frontend disponibile su http://localhost:5173
 
@@ -150,7 +150,12 @@ Principali gruppi di endpoint:
 │   │   └── seed/        dati di esempio iniziali
 │   ├── .env.example    configurazione (copiare in .env)
 │   └── Dockerfile
-├── frontend/           React + Vite (Single Page Application)
+├── frontend/           Angular (Single Page Application, standalone components)
+│   ├── src/app/
+│   │   ├── core/         servizi (auth, tema, API), guard, interceptor
+│   │   ├── shared/       componenti riusabili (avatar, challenge-card)
+│   │   ├── navbar/       barra di navigazione
+│   │   └── pages/        una pagina per route
 │   ├── Dockerfile
 │   └── nginx.conf      proxy /api e /uploads verso il backend
 ├── docker-compose.yml  db (PostgreSQL) + backend + frontend

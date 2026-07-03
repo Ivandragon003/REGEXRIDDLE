@@ -1,0 +1,152 @@
+<main class="page" *ngIf="isLoading()">
+  <div class="container" style="display: flex; justify-content: center">
+    <div class="spinner"></div>
+  </div>
+</main>
+
+<main class="page" *ngIf="!isLoading() && (isError() || !challenge())">
+  <div class="container">
+    <div class="alert alert-error">Sfida non trovata.</div>
+    <a routerLink="/sfide" class="btn btn-ghost" style="margin-top: 1rem">← Torna alle sfide</a>
+  </div>
+</main>
+
+<main class="page" *ngIf="!isLoading() && !isError() && challenge() as challenge">
+  <div class="container">
+    <a routerLink="/sfide" class="back">← Tutte le sfide</a>
+
+    <header class="header">
+      <h1 class="page-title">{{ challenge.title }}</h1>
+      <p class="muted">
+        di <strong class="accent">{{ challenge.authorUsername }}</strong> · {{ challenge.solvedByCount }}
+        risolta · {{ challenge.totalAttempts }} tentativi
+      </p>
+      <p *ngIf="challenge.description">{{ challenge.description }}</p>
+    </header>
+
+    <section class="card examples">
+      <h2>Esempi</h2>
+      <div class="exampleRow">
+        <span class="badge badge-success">✓ Soddisfa la regex</span>
+        <code class="exampleValue">{{ challenge.exampleMatch }}</code>
+      </div>
+      <div class="exampleRow">
+        <span class="badge badge-danger">✗ Non soddisfa la regex</span>
+        <code class="exampleValue">{{ challenge.exampleNoMatch }}</code>
+      </div>
+    </section>
+
+    <section class="alert alert-info banner" *ngIf="!auth.isAuthenticated()">
+      <span>Accedi per partecipare alla sfida.</span>
+      <a routerLink="/login" [state]="{ from: '/sfide/' + id }" class="btn btn-primary btn-sm">Accedi</a>
+    </section>
+
+    <section class="card ownerCard" *ngIf="auth.isAuthenticated() && isOwner()">
+      <div class="ownerBadge">👑 Sei l'autore di questa sfida</div>
+      <p class="muted">
+        Non puoi tentare una sfida creata da te. Qui vedi come sta andando tra gli altri
+        giocatori.
+      </p>
+      <div class="ownerStats">
+        <div class="ownerStat">
+          <span class="ownerStatValue">{{ challenge.solvedByCount }}</span>
+          <span class="muted">l'hanno risolta</span>
+        </div>
+        <div class="ownerStat">
+          <span class="ownerStatValue">{{ challenge.totalAttempts }}</span>
+          <span class="muted">tentativi totali</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card attemptCard" *ngIf="auth.isAuthenticated() && !isOwner()">
+      <h2>Il tuo tentativo</h2>
+      <form (ngSubmit)="handleSubmit()">
+        <div class="field">
+          <label class="label" for="regex">Proponi una regex</label>
+          <input
+            id="regex"
+            class="input mono"
+            [class.has-error]="clientError() || serverError()"
+            placeholder="^...$"
+            [ngModel]="regex()"
+            (ngModelChange)="regex.set($event)"
+            name="regex"
+            [attr.aria-invalid]="!!(clientError() || serverError())"
+          />
+          <span class="field-error" *ngIf="clientError()">{{ clientError() }}</span>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="isPending()">
+          {{ isPending() ? 'Verifica...' : 'Verifica' }}
+        </button>
+      </form>
+
+      <div class="alert alert-error" style="margin-top: 1rem" *ngIf="serverError()">
+        {{ serverError() }}
+      </div>
+
+      <div class="result" [class.solved]="result.solved" *ngIf="result() as result">
+        <div class="successBanner" *ngIf="result.solved">
+          🎉 <strong>Sfida risolta!</strong> La tua regex si comporta esattamente come
+          l'originale.
+        </div>
+        <p class="muted" *ngIf="!result.solved">Non ancora: continua a perfezionare la regex.</p>
+
+        <div class="progressRow">
+          <div class="row between" style="margin-bottom: 0.35rem">
+            <span class="progressLabel">Stringhe positive soddisfatte</span>
+            <span class="mono accent">{{ result.positiveMatched }}/{{ result.totalPositive }}</span>
+          </div>
+          <div class="progress">
+            <div
+              class="progress-bar success"
+              [style.width.%]="progressPct(result.positiveMatched, result.totalPositive)"
+            ></div>
+          </div>
+        </div>
+
+        <div class="progressRow">
+          <div class="row between" style="margin-bottom: 0.35rem">
+            <span class="progressLabel">Stringhe negative correttamente escluse</span>
+            <span class="mono accent">{{ result.negativeMatched }}/{{ result.totalNegative }}</span>
+          </div>
+          <div class="progress">
+            <div
+              class="progress-bar success"
+              [style.width.%]="progressPct(result.negativeMatched, result.totalNegative)"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="history" *ngIf="attempts().length > 0">
+        <h3>I tuoi tentativi</h3>
+        <div class="tableWrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Regex</th>
+                <th>Pos.</th>
+                <th>Neg.</th>
+                <th>Esito</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of attempts()">
+                <td class="muted">{{ formatDateTime(a.attemptedAt) }}</td>
+                <td><code>{{ a.proposedRegex }}</code></td>
+                <td class="mono">{{ a.positiveMatched }}/{{ a.totalPositive }}</td>
+                <td class="mono">{{ a.negativeMatched }}/{{ a.totalNegative }}</td>
+                <td>
+                  <span class="accent" *ngIf="a.solved">✓ risolta</span>
+                  <span class="muted" *ngIf="!a.solved">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

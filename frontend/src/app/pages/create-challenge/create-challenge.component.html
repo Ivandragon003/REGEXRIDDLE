@@ -1,0 +1,176 @@
+<main class="page">
+  <div class="container" style="max-width: 760px">
+    <header class="page-header">
+      <h1 class="page-title">Nuova sfida</h1>
+      <p class="page-subtitle">
+        Definisci la regex segreta e le stringhe di controllo. Gli altri proveranno a indovinarla.
+      </p>
+    </header>
+
+    <div class="alert alert-error" style="margin-bottom: 1.5rem" *ngIf="createError()">
+      {{ createError() }}
+    </div>
+
+    <form (ngSubmit)="handleSubmit()" novalidate class="stack">
+      <!-- 1. Info base -->
+      <section class="card">
+        <h3>1 · Informazioni</h3>
+        <div class="field">
+          <label class="label" for="title">Titolo</label>
+          <input
+            id="title"
+            class="input"
+            [class.has-error]="errors().title"
+            [ngModel]="title()"
+            (ngModelChange)="title.set($event)"
+            name="title"
+          />
+          <span class="field-error" *ngIf="errors().title">{{ errors().title }}</span>
+        </div>
+        <div class="field">
+          <label class="label" for="description">Descrizione (opzionale)</label>
+          <textarea
+            id="description"
+            class="textarea"
+            rows="3"
+            [ngModel]="description()"
+            (ngModelChange)="description.set($event)"
+            name="description"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- 2. Regex segreta -->
+      <section class="card">
+        <h3>2 · Regex segreta</h3>
+        <div class="field">
+          <label class="label" for="secretRegex">La tua regex (non sarà mai mostrata agli altri)</label>
+          <input
+            id="secretRegex"
+            class="input mono"
+            [class.has-error]="errors().secretRegex"
+            placeholder="^[a-z]+$"
+            [ngModel]="secretRegex()"
+            (ngModelChange)="secretRegex.set($event)"
+            name="secretRegex"
+          />
+          <span class="field-error" *ngIf="errors().secretRegex">{{ errors().secretRegex }}</span>
+          <span class="validHint" *ngIf="!errors().secretRegex && secretRegex() && regexValid">
+            ✓ sintassi valida
+          </span>
+          <span class="field-error" *ngIf="!errors().secretRegex && secretRegex() && !regexValid">
+            ✗ sintassi non valida
+          </span>
+        </div>
+      </section>
+
+      <!-- 3. Esempi pubblici -->
+      <section class="card">
+        <h3>3 · Esempi pubblici</h3>
+        <div class="field">
+          <label class="label" for="exampleMatch">Stringa che soddisfa la regex</label>
+          <input
+            id="exampleMatch"
+            class="input mono"
+            [class.has-error]="errors().exampleMatch"
+            [ngModel]="exampleMatch()"
+            (ngModelChange)="exampleMatch.set($event)"
+            name="exampleMatch"
+          />
+          <span class="field-error" *ngIf="errors().exampleMatch">{{ errors().exampleMatch }}</span>
+        </div>
+        <div class="field">
+          <label class="label" for="exampleNoMatch">Stringa che NON soddisfa la regex</label>
+          <input
+            id="exampleNoMatch"
+            class="input mono"
+            [class.has-error]="errors().exampleNoMatch"
+            [ngModel]="exampleNoMatch()"
+            (ngModelChange)="exampleNoMatch.set($event)"
+            name="exampleNoMatch"
+          />
+          <span class="field-error" *ngIf="errors().exampleNoMatch">{{ errors().exampleNoMatch }}</span>
+        </div>
+      </section>
+
+      <!-- 4. Stringhe di controllo -->
+      <section class="card">
+        <h3>4 · Stringhe di controllo</h3>
+        <p class="muted" style="font-size: 0.85rem">
+          Restano segrete e servono a verificare le soluzioni proposte. Le caselle si colorano in
+          base alla regex inserita sopra.
+        </p>
+
+        <div class="controlBlock">
+          <div class="row between">
+            <h3>Positive</h3>
+            <span class="muted" style="font-size: 0.8rem">{{ positives().length }}/{{ maxControl }}</span>
+          </div>
+          <p class="muted" style="font-size: 0.85rem">Devono soddisfare la regex.</p>
+          <div class="controlItem" *ngFor="let value of positives(); let i = index">
+            <input
+              class="input mono"
+              [class.has-error]="controlStatus(value, true) === false"
+              [ngModel]="value"
+              (ngModelChange)="updatePositive(i, $event)"
+              [name]="'positive' + i"
+              placeholder="stringa che soddisfa..."
+              [attr.aria-label]="'Positive ' + (i + 1)"
+            />
+            <span class="ok" *ngIf="controlStatus(value, true) === true">✓</span>
+            <span class="ko" *ngIf="controlStatus(value, true) === false">✗</span>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="removePositive(i)" aria-label="Rimuovi">
+              ×
+            </button>
+          </div>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            (click)="addPositive()"
+            [disabled]="positives().length >= maxControl"
+          >
+            + Aggiungi
+          </button>
+        </div>
+        <span class="field-error" *ngIf="errors().positives">{{ errors().positives }}</span>
+
+        <div class="controlBlock">
+          <div class="row between">
+            <h3>Negative</h3>
+            <span class="muted" style="font-size: 0.8rem">{{ negatives().length }}/{{ maxControl }}</span>
+          </div>
+          <p class="muted" style="font-size: 0.85rem">NON devono soddisfare la regex.</p>
+          <div class="controlItem" *ngFor="let value of negatives(); let i = index">
+            <input
+              class="input mono"
+              [class.has-error]="controlStatus(value, false) === false"
+              [ngModel]="value"
+              (ngModelChange)="updateNegative(i, $event)"
+              [name]="'negative' + i"
+              placeholder="stringa che NON soddisfa..."
+              [attr.aria-label]="'Negative ' + (i + 1)"
+            />
+            <span class="ok" *ngIf="controlStatus(value, false) === true">✓</span>
+            <span class="ko" *ngIf="controlStatus(value, false) === false">✗</span>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="removeNegative(i)" aria-label="Rimuovi">
+              ×
+            </button>
+          </div>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            (click)="addNegative()"
+            [disabled]="negatives().length >= maxControl"
+          >
+            + Aggiungi
+          </button>
+        </div>
+        <span class="field-error" *ngIf="errors().negatives">{{ errors().negatives }}</span>
+      </section>
+
+      <button type="submit" class="btn btn-primary" [disabled]="isPending()">
+        {{ isPending() ? 'Creazione...' : 'Crea sfida' }}
+      </button>
+    </form>
+  </div>
+</main>

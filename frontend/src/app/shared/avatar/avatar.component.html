@@ -1,0 +1,13 @@
+<img
+  *ngIf="src as resolvedSrc"
+  [src]="resolvedSrc"
+  [alt]="username ? 'Avatar di ' + username : 'Avatar'"
+  [ngStyle]="dimensionStyle"
+  style="flex-shrink: 0; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);"
+/>
+<span
+  *ngIf="!src"
+  aria-hidden="true"
+  [ngStyle]="dimensionStyle"
+  style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--accent); font-family: var(--font-mono); font-weight: 700;"
+>{{ initial }}</span>

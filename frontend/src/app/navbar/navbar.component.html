@@ -1,0 +1,63 @@
+<nav class="navbar">
+  <div class="container">
+    <div class="inner">
+      <a routerLink="/" class="logo" (click)="closeMenu()">
+        Regex<span class="logoMark">Riddle</span>
+      </a>
+
+      <button
+        class="hamburger"
+        aria-label="Apri il menu"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="toggleMenu()"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="menu" [class.menuClosed]="!menuOpen()">
+        <div class="links">
+          <a routerLink="/sfide" routerLinkActive="linkActive" class="link" (click)="closeMenu()">Sfide</a>
+          <a routerLink="/classifica" routerLinkActive="linkActive" class="link" (click)="closeMenu()">Classifica</a>
+          <a routerLink="/come-funziona" routerLinkActive="linkActive" class="link" (click)="closeMenu()">Come funziona</a>
+        </div>
+
+        <div class="actions">
+          <button
+            class="iconButton"
+            (click)="themeService.toggleTheme()"
+            [attr.aria-label]="themeService.theme() === 'dark' ? 'Passa al tema chiaro' : 'Passa al tema scuro'"
+            [title]="themeService.theme() === 'dark' ? 'Tema chiaro' : 'Tema scuro'"
+          >
+            {{ themeService.theme() === 'dark' ? '☀️' : '🌙' }}
+          </button>
+
+          <ng-container *ngIf="auth.isAuthenticated(); else guestLinks">
+            <div class="userMenu" data-user-menu>
+              <button
+                class="userButton"
+                (click)="toggleDropdown()"
+                aria-haspopup="true"
+                [attr.aria-expanded]="dropdownOpen()"
+              >
+                <app-avatar [username]="auth.user()?.username" [avatarUrl]="auth.user()?.avatarUrl" [size]="28" />
+                <span class="userName">{{ auth.user()?.username }}</span>
+              </button>
+              <div class="dropdown" *ngIf="dropdownOpen()">
+                <a routerLink="/profilo" class="dropdownItem" (click)="dropdownOpen.set(false); closeMenu()">
+                  Profilo
+                </a>
+                <button class="dropdownItem" (click)="handleLogout()">Esci</button>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #guestLinks>
+            <a routerLink="/login" class="btn btn-ghost btn-sm" (click)="closeMenu()">Accedi</a>
+            <a routerLink="/registrati" class="btn btn-primary btn-sm" (click)="closeMenu()">Registrati</a>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

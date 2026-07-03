@@ -1,0 +1,79 @@
+<main class="wrap">
+  <form class="card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <p class="kicker">// crea un account</p>
+    <h1 class="title">Registrati</h1>
+
+    <div class="alert alert-error" role="alert" style="margin-bottom: 1rem" *ngIf="serverError()">
+      {{ serverError() }}
+    </div>
+
+    <div class="field">
+      <label class="label" for="username">Username</label>
+      <input
+        id="username"
+        class="input"
+        [class.has-error]="form.controls.username.invalid && form.controls.username.touched"
+        formControlName="username"
+      />
+      <span class="field-error" *ngIf="form.controls.username.invalid && form.controls.username.touched">
+        <ng-container *ngIf="form.controls.username.errors?.['required']">Lo username è obbligatorio</ng-container>
+        <ng-container *ngIf="form.controls.username.errors?.['minlength']">Minimo 3 caratteri</ng-container>
+        <ng-container *ngIf="form.controls.username.errors?.['maxlength']">Massimo 30 caratteri</ng-container>
+      </span>
+    </div>
+
+    <div class="field">
+      <label class="label" for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        class="input"
+        [class.has-error]="form.controls.email.invalid && form.controls.email.touched"
+        formControlName="email"
+      />
+      <span class="field-error" *ngIf="form.controls.email.invalid && form.controls.email.touched">
+        <ng-container *ngIf="form.controls.email.errors?.['required']">L'email è obbligatoria</ng-container>
+        <ng-container *ngIf="form.controls.email.errors?.['pattern']">Email non valida</ng-container>
+      </span>
+    </div>
+
+    <div class="field">
+      <label class="label" for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        class="input"
+        [class.has-error]="form.controls.password.invalid && form.controls.password.touched"
+        formControlName="password"
+      />
+      <span class="field-error" *ngIf="form.controls.password.invalid && form.controls.password.touched">
+        <ng-container *ngIf="form.controls.password.errors?.['required']">La password è obbligatoria</ng-container>
+        <ng-container *ngIf="form.controls.password.errors?.['minlength']">Minimo 6 caratteri</ng-container>
+      </span>
+    </div>
+
+    <div class="field">
+      <label class="label" for="confirmPassword">Conferma password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        class="input"
+        [class.has-error]="form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched"
+        formControlName="confirmPassword"
+      />
+      <span
+        class="field-error"
+        *ngIf="form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched"
+      >
+        <ng-container *ngIf="form.controls.confirmPassword.errors?.['required']">Conferma la password</ng-container>
+        <ng-container *ngIf="form.controls.confirmPassword.errors?.['mismatch']">Le password non coincidono</ng-container>
+      </span>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Creazione...' : 'Crea account' }}
+    </button>
+
+    <p class="switch">Hai già un account? <a routerLink="/login">Accedi</a></p>
+  </form>
+</main>

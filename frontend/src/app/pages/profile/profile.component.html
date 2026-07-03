@@ -1,0 +1,108 @@
+<main class="page" *ngIf="isLoading()">
+  <div class="container" style="display: flex; justify-content: center">
+    <div class="spinner"></div>
+  </div>
+</main>
+
+<main class="page" *ngIf="!isLoading()">
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Il tuo profilo</h1>
+    </header>
+
+    <div
+      class="alert"
+      [class.alert-error]="feedback()?.type === 'error'"
+      [class.alert-info]="feedback()?.type !== 'error'"
+      [style.borderColor]="feedback()?.type === 'success' ? 'var(--accent)' : null"
+      style="margin-bottom: 1.5rem"
+      role="status"
+      *ngIf="feedback()"
+    >
+      {{ feedback()?.text }}
+    </div>
+
+    <div class="layout">
+      <section class="card">
+        <h3>Dati account</h3>
+        <button type="button" class="avatarButton" (click)="triggerFileInput()" aria-label="Cambia avatar">
+          <app-avatar [username]="auth.user()?.username" [avatarUrl]="profile()?.avatarUrl" [size]="88" />
+          <span class="avatarOverlay">{{ uploading() ? '...' : 'Cambia' }}</span>
+        </button>
+        <input
+          #fileInput
+          type="file"
+          accept="image/jpeg,image/png,image/gif"
+          hidden
+          (change)="handleAvatarChange($event)"
+        />
+
+        <form (ngSubmit)="handleSave()" style="margin-top: 1.5rem">
+          <div class="field">
+            <label class="label" for="username">Username</label>
+            <input
+              id="username"
+              class="input"
+              [ngModel]="username()"
+              (ngModelChange)="username.set($event)"
+              name="username"
+            />
+          </div>
+          <div class="field">
+            <label class="label" for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              class="input"
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)"
+              name="email"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            {{ saving() ? 'Salvataggio...' : 'Salva modifiche' }}
+          </button>
+        </form>
+      </section>
+
+      <div class="stack">
+        <section class="card">
+          <h3>Statistiche</h3>
+          <div class="stats">
+            <div class="stat">
+              <span class="statValue">{{ profile()?.createdChallengesCount ?? 0 }}</span>
+              <span class="muted">Sfide create</span>
+            </div>
+            <div class="stat">
+              <span class="statValue">{{ profile()?.solvedCount ?? 0 }}</span>
+              <span class="muted">Sfide risolte</span>
+            </div>
+            <div class="stat">
+              <span class="statValue">{{ profile()?.totalAttempts ?? 0 }}</span>
+              <span class="muted">Tentativi totali</span>
+            </div>
+            <div class="stat">
+              <span class="statValue">{{ (profile()?.avgAttempts ?? 0).toFixed(1) }}</span>
+              <span class="muted">Media tentativi</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Le tue sfide</h3>
+          <ul class="challengeList" *ngIf="myChallenges() && myChallenges()!.length > 0">
+            <li *ngFor="let c of myChallenges()">
+              <a [routerLink]="['/sfide', c.id]" class="challengeLink">
+                <span>{{ c.title }}</span>
+                <span class="muted mono" style="font-size: 0.8rem">{{ c.solvedByCount }} risolta</span>
+              </a>
+            </li>
+          </ul>
+          <p class="muted" *ngIf="!myChallenges() || myChallenges()!.length === 0">
+            Non hai ancora creato sfide. <a routerLink="/sfide/nuova" class="accent">Creane una</a>.
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>

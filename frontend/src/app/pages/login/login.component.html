@@ -1,0 +1,43 @@
+<main class="wrap">
+  <form class="card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <p class="kicker">// accedi</p>
+    <h1 class="title">Bentornato</h1>
+
+    <div class="alert alert-error" role="alert" style="margin-bottom: 1rem" *ngIf="serverError()">
+      {{ serverError() }}
+    </div>
+
+    <div class="field">
+      <label class="label" for="username">Username</label>
+      <input
+        id="username"
+        class="input"
+        [class.has-error]="form.controls.username.invalid && form.controls.username.touched"
+        formControlName="username"
+      />
+      <span class="field-error" *ngIf="form.controls.username.invalid && form.controls.username.touched">
+        Lo username è obbligatorio
+      </span>
+    </div>
+
+    <div class="field">
+      <label class="label" for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        class="input"
+        [class.has-error]="form.controls.password.invalid && form.controls.password.touched"
+        formControlName="password"
+      />
+      <span class="field-error" *ngIf="form.controls.password.invalid && form.controls.password.touched">
+        La password è obbligatoria
+      </span>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Accesso...' : 'Accedi' }}
+    </button>
+
+    <p class="switch">Non hai un account? <a routerLink="/registrati">Registrati</a></p>
+  </form>
+</main>

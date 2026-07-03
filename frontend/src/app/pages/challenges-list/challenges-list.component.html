@@ -34,15 +34,33 @@
     </div>
 
     <div class="chips" *ngIf="auth.isAuthenticated()">
-      <div class="chipGroup">
+      <div class="chipGroup" role="radiogroup" aria-label="Filtra per autore">
         <button
           type="button"
           class="chip"
-          [class.chipActive]="onlyMine()"
-          (click)="toggleOnlyMine()"
-          [attr.aria-pressed]="onlyMine()"
+          [class.chipActive]="authorFilter() === 'all'"
+          (click)="setAuthorFilter('all')"
+          [attr.aria-pressed]="authorFilter() === 'all'"
         >
-          Solo le mie
+          Tutte
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.chipActive]="authorFilter() === 'mine'"
+          (click)="setAuthorFilter('mine')"
+          [attr.aria-pressed]="authorFilter() === 'mine'"
+        >
+          Mie
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.chipActive]="authorFilter() === 'others'"
+          (click)="setAuthorFilter('others')"
+          [attr.aria-pressed]="authorFilter() === 'others'"
+        >
+          Non mie
         </button>
       </div>
       <span class="chipDivider" aria-hidden="true"></span>

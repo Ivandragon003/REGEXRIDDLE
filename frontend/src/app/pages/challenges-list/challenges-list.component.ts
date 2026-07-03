@@ -7,6 +7,7 @@ import { AuthService } from '../../core/auth.service';
 import { ChallengeCardComponent } from '../../shared/challenge-card/challenge-card.component';
 
 type SortKey = 'recent' | 'attempts' | 'solved';
+type AuthorFilter = 'all' | 'mine' | 'others';
 
 const SORTS: Record<SortKey, { label: string; fn: (a: Challenge, b: Challenge) => number }> = {
   recent: {
@@ -33,7 +34,7 @@ export class ChallengesListComponent {
 
   search = signal('');
   sort = signal<SortKey>('recent');
-  onlyMine = signal(false);
+  authorFilter = signal<AuthorFilter>('all');
   hideSolved = signal(false);
 
   challenges = signal<Challenge[] | null>(null);
@@ -47,9 +48,11 @@ export class ChallengesListComponent {
     const q = this.search().trim().toLowerCase();
     const solvedSet = new Set(this.solvedIds());
     const user = this.auth.user();
+    const author = this.authorFilter();
     let result = challenges.filter((c) => {
       if (q && !c.title.toLowerCase().includes(q)) return false;
-      if (this.onlyMine() && c.authorUsername !== user?.username) return false;
+      if (author === 'mine' && c.authorUsername !== user?.username) return false;
+      if (author === 'others' && c.authorUsername === user?.username) return false;
       if (this.hideSolved() && solvedSet.has(c.id)) return false;
       return true;
     });
@@ -82,8 +85,8 @@ export class ChallengesListComponent {
     }
   }
 
-  toggleOnlyMine(): void {
-    this.onlyMine.update((v) => !v);
+  setAuthorFilter(value: AuthorFilter): void {
+    this.authorFilter.set(value);
   }
 
   toggleHideSolved(): void {

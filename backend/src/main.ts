@@ -2,12 +2,22 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Security headers (HSTS, X-Content-Type-Options, frameguard, ecc.).
+  // crossOriginResourcePolicy 'cross-origin' consente al frontend (porta 5173)
+  // di caricare gli avatar serviti da /uploads senza essere bloccato dal CORP.
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   // Tutte le route REST sotto /api
   app.setGlobalPrefix('api');

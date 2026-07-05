@@ -2,3 +2,6 @@ node_modules/
 dist/
 .env
 *.log
+
+# Test locali: non vanno pushati (toolchain e sorgenti di test isolati)
+tests-local/

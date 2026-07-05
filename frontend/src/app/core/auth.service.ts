@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 
 export interface AuthUser {
-  userId: string;
+  userId: number;
   username: string;
   avatarUrl?: string | null;
 }

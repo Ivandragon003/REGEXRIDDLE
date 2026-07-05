@@ -5,7 +5,7 @@ import { API_BASE_URL } from './api.constants';
 
 export interface LoginResponse {
   token: string;
-  userId: string;
+  userId: number;
   username: string;
 }
 

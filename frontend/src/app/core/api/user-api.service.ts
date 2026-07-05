@@ -10,7 +10,7 @@ export interface UserProfile {
   createdChallengesCount: number;
   solvedCount: number;
   totalAttempts: number;
-  avgAttempts: number | null;
+  avgAttempts: number;
 }
 
 export interface UpdateUserPayload {
@@ -34,9 +34,5 @@ export class UserApiService {
     const form = new FormData();
     form.append('file', file);
     return this.http.post<{ avatarUrl: string }>(`${API_BASE_URL}/users/me/avatar`, form);
-  }
-
-  getByUsername(username: string): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${API_BASE_URL}/users/${username}`);
   }
 }

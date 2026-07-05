@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 
 // Protegge le route riservate: se non autenticato, redirige al login
 // memorizzando la destinazione per tornarci dopo l'accesso.
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 

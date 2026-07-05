@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Put,
   Post,
   UploadedFile,
@@ -49,11 +48,5 @@ export class UsersController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.users.uploadAvatar(user.userId, file);
-  }
-
-  @Get(':username')
-  @ApiOperation({ summary: 'Profilo pubblico di un utente' })
-  getPublic(@Param('username') username: string) {
-    return this.users.getPublicProfile(username);
   }
 }

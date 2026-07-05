@@ -39,7 +39,7 @@ export class ChallengesListComponent {
   hideSolved = signal(false);
 
   challenges = signal<Challenge[] | null>(null);
-  solvedIds = signal<string[]>([]);
+  solvedIds = signal<number[]>([]);
   isLoading = signal(true);
   isError = signal(false);
 
@@ -47,14 +47,16 @@ export class ChallengesListComponent {
     const challenges = this.challenges();
     if (!challenges) return [];
     const q = this.search().trim().toLowerCase();
-    const solvedSet = new Set(this.solvedIds());
+    // Normalizzo a stringa entrambi i lati del confronto: così l'appartenenza
+    // regge anche se un id arrivasse come stringa invece che come numero.
+    const solvedSet = new Set(this.solvedIds().map(String));
     const user = this.auth.user();
     const author = this.authorFilter();
     let result = challenges.filter((c) => {
       if (q && !c.title.toLowerCase().includes(q)) return false;
       if (author === 'mine' && c.authorUsername !== user?.username) return false;
       if (author === 'others' && c.authorUsername === user?.username) return false;
-      if (this.hideSolved() && solvedSet.has(c.id)) return false;
+      if (this.hideSolved() && solvedSet.has(String(c.id))) return false;
       return true;
     });
     result = [...result].sort(SORTS[this.sort()].fn);

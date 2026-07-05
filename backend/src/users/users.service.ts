@@ -22,13 +22,6 @@ export interface UserProfileDto {
   avgAttempts: number;
 }
 
-export interface PublicUserDto {
-  username: string;
-  avatarUrl: string | null;
-  solvedCount: number;
-  createdChallengesCount: number;
-}
-
 const AVATAR_DIR = join(process.cwd(), 'uploads', 'avatars');
 
 // Firme binarie ("magic bytes") dei formati immagine ammessi. Si valida il
@@ -141,23 +134,6 @@ export class UsersService {
     } catch {
       // File già assente o non rimovibile: ininfluente.
     }
-  }
-
-  async getPublicProfile(username: string): Promise<PublicUserDto> {
-    const user = await this.prisma.user.findUnique({ where: { username } });
-    if (!user) {
-      throw new NotFoundException('Utente non trovato');
-    }
-    const stats = await this.stats.computeFor(user.id);
-    const createdChallengesCount = await this.prisma.challenge.count({
-      where: { authorId: user.id },
-    });
-    return {
-      username: user.username,
-      avatarUrl: user.avatarUrl,
-      solvedCount: stats.solvedCount,
-      createdChallengesCount,
-    };
   }
 
   private async requireById(id: number): Promise<User> {

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api.constants';
 
 export interface Challenge {
-  id: string;
+  id: number;
   title: string;
   description?: string | null;
   createdAt: string;
@@ -59,8 +59,8 @@ export class ChallengesApiService {
     return this.http.get<Challenge[]>(`${API_BASE_URL}/challenges/my`);
   }
 
-  getSolved(): Observable<string[]> {
-    return this.http.get<string[]>(`${API_BASE_URL}/challenges/solved`);
+  getSolved(): Observable<number[]> {
+    return this.http.get<number[]>(`${API_BASE_URL}/challenges/solved`);
   }
 
   create(data: CreateChallengePayload): Observable<Challenge> {

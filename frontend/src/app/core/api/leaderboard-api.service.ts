@@ -8,7 +8,7 @@ export interface LeaderboardEntry {
   username: string;
   avatarUrl: string | null;
   solvedCount: number;
-  avgAttempts: number | null;
+  avgAttempts: number;
 }
 
 @Injectable({ providedIn: 'root' })

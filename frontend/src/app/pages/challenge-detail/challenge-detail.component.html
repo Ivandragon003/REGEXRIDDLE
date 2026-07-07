@@ -63,7 +63,14 @@
 
     <section class="card attemptCard" *ngIf="auth.isAuthenticated() && !isOwner()">
       <h2>Il tuo tentativo</h2>
-      <form (ngSubmit)="handleSubmit()">
+
+      <div class="alert alert-success" *ngIf="isSolved()">
+        🎉 <strong>Hai già risolto questa sfida.</strong> Non puoi ritentarla, ma ecco la regex
+        con cui l'hai risolta:
+        <code class="exampleValue">{{ solvedAttempt()!.proposedRegex }}</code>
+      </div>
+
+      <form (ngSubmit)="handleSubmit()" *ngIf="!isSolved()">
         <div class="field">
           <label class="label" for="regex">Proponi una regex</label>
           <input

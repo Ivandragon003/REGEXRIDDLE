@@ -42,6 +42,9 @@ export class ChallengeDetailComponent {
     return this.auth.isAuthenticated() && c != null && this.auth.user()?.username === c.authorUsername;
   });
 
+  solvedAttempt = computed(() => this.attempts().find((a) => a.solved) ?? null);
+  isSolved = computed(() => this.solvedAttempt() != null);
+
   constructor() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');

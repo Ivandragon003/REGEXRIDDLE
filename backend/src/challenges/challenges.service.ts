@@ -127,6 +127,14 @@ export class ChallengesService {
       throw new ForbiddenException('Non puoi tentare una sfida creata da te');
     }
 
+    // Una sfida già risolta non può essere ritentata
+    const alreadySolved = await this.prisma.attempt.findFirst({
+      where: { challengeId, userId, solved: true },
+    });
+    if (alreadySolved) {
+      throw new ForbiddenException('Hai già risolto questa sfida');
+    }
+
     // 3-4. Valutazione sulle stringhe di controllo segrete
     const positives = challenge.controlStringsPositive as unknown as string[];
     const negatives = challenge.controlStringsNegative as unknown as string[];

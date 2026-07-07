@@ -5,9 +5,7 @@ import { RouterLink } from '@angular/router';
 import { Challenge, ChallengesApiService } from '../../core/api/challenges-api.service';
 import { AuthService } from '../../core/auth.service';
 import { ChallengeCardComponent } from '../../shared/challenge-card/challenge-card.component';
-
-type SortKey = 'recent' | 'attempts' | 'solved';
-type AuthorFilter = 'all' | 'mine' | 'others';
+import { AuthorFilter, ChallengesFilterState, SortKey } from './challenges-filter.state';
 
 const SORTS: Record<SortKey, { label: string; fn: (a: Challenge, b: Challenge) => number }> = {
   recent: {
@@ -27,16 +25,17 @@ const SORTS: Record<SortKey, { label: string; fn: (a: Challenge, b: Challenge) =
 })
 export class ChallengesListComponent {
   private challengesApi = inject(ChallengesApiService);
+  private filterState = inject(ChallengesFilterState);
   auth = inject(AuthService);
 
   sortKeys = Object.keys(SORTS) as SortKey[];
   sortLabel = (key: SortKey) => SORTS[key].label;
   skeletons = Array.from({ length: 6 });
 
-  search = signal('');
-  sort = signal<SortKey>('recent');
-  authorFilter = signal<AuthorFilter>('all');
-  hideSolved = signal(false);
+  search = this.filterState.search;
+  sort = this.filterState.sort;
+  authorFilter = this.filterState.authorFilter;
+  hideSolved = this.filterState.hideSolved;
 
   challenges = signal<Challenge[] | null>(null);
   solvedIds = signal<number[]>([]);

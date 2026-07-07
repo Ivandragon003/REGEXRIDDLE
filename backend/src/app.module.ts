@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ChallengesModule } from './challenges/challenges.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
-import { SeedService } from './seed/seed.service';
 import { validateEnv } from './common/env.validation';
 
 @Module({
@@ -23,7 +22,6 @@ import { validateEnv } from './common/env.validation';
     LeaderboardModule,
   ],
   providers: [
-    SeedService,
     // Applica il rate limiting a tutte le route.
     { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],

@@ -52,7 +52,7 @@ export class LeaderboardService {
     // Dati anagrafici degli utenti in classifica (una sola query).
     const users = await this.prisma.user.findMany({
       where: { id: { in: [...byUser.keys()] } },
-      select: { id: true, username: true, avatarUrl: true },
+      select: { id: true, username: true, avatarMime: true },
     });
     const userById = new Map(users.map((u) => [u.id, u]));
 
@@ -63,7 +63,7 @@ export class LeaderboardService {
       entries.push({
         rank: 0,
         username: user.username,
-        avatarUrl: user.avatarUrl,
+        avatarUrl: user.avatarMime ? `/api/users/${user.id}/avatar` : null,
         solvedCount: acc.solvedCount,
         avgAttempts: acc.sum / acc.solvedCount,
       });

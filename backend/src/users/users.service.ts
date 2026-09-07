@@ -4,9 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { promises as fs } from 'fs';
-import { basename, join } from 'path';
 import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { StatsService } from '../stats/stats.service';
@@ -22,25 +19,23 @@ export interface UserProfileDto {
   avgAttempts: number;
 }
 
-const AVATAR_DIR = join(process.cwd(), 'uploads', 'avatars');
-
 // Firme binarie ("magic bytes") dei formati immagine ammessi. Si valida il
 // contenuto reale del file, non l'header Content-Type dichiarato dal client
 // (falsificabile: un eseguibile può spacciarsi per image/png).
-const IMAGE_SIGNATURES: { ext: string; magic: number[] }[] = [
-  { ext: '.jpg', magic: [0xff, 0xd8, 0xff] },
-  { ext: '.png', magic: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] },
-  { ext: '.gif', magic: [0x47, 0x49, 0x46, 0x38] }, // "GIF8" (GIF87a / GIF89a)
+const IMAGE_SIGNATURES: { mime: string; magic: number[] }[] = [
+  { mime: 'image/jpeg', magic: [0xff, 0xd8, 0xff] },
+  { mime: 'image/png', magic: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] },
+  { mime: 'image/gif', magic: [0x47, 0x49, 0x46, 0x38] },
 ];
 
 /** Riconosce il formato immagine dai primi byte; null se non è un'immagine ammessa. */
-function detectImageExt(buffer: Buffer): string | null {
-  for (const { ext, magic } of IMAGE_SIGNATURES) {
+function detectImageMime(buffer: Buffer): string | null {
+  for (const { mime, magic } of IMAGE_SIGNATURES) {
     if (
       buffer.length >= magic.length &&
       magic.every((byte, i) => buffer[i] === byte)
     ) {
-      return ext;
+      return mime;
     }
   }
   return null;
@@ -62,7 +57,7 @@ export class UsersService {
     return {
       username: user.username,
       email: user.email,
-      avatarUrl: user.avatarUrl,
+      avatarUrl: this.avatarUrl(user),
       solvedCount: stats.solvedCount,
       createdChallengesCount,
       totalAttempts: stats.totalAttempts,
@@ -78,17 +73,10 @@ export class UsersService {
         throw new ConflictException('Username già in uso');
       }
     }
-    if (dto.email && dto.email !== user.email) {
-      if (await this.prisma.user.findUnique({ where: { email: dto.email } })) {
-        throw new ConflictException('Email già in uso');
-      }
-    }
-
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
         username: dto.username ?? undefined,
-        email: dto.email ?? undefined,
       },
     });
     return this.getMe(user.id);
@@ -102,38 +90,36 @@ export class UsersService {
     if (!file || !file.buffer) {
       throw new BadRequestException('Nessun file caricato');
     }
-    const ext = detectImageExt(file.buffer);
-    if (!ext) {
+    const mime = detectImageMime(file.buffer);
+    if (!mime) {
       throw new BadRequestException('Formato non supportato (ammessi: JPEG, PNG, GIF)');
     }
 
-    await fs.mkdir(AVATAR_DIR, { recursive: true });
-    const filename = `${user.id}_${randomUUID()}${ext}`;
-    await fs.writeFile(join(AVATAR_DIR, filename), file.buffer);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { avatarData: file.buffer, avatarMime: mime },
+    });
 
-    const avatarUrl = `/uploads/avatars/${filename}`;
-    await this.prisma.user.update({ where: { id: user.id }, data: { avatarUrl } });
-
-    // Rimuove il vecchio avatar per non accumulare file orfani sul disco.
-    await this.removeOldAvatar(user.avatarUrl, filename);
-
-    return { avatarUrl };
+    return { avatarUrl: this.avatarUrl(user.id, mime)! };
   }
 
-  /** Cancella (best effort) il precedente file avatar, restando dentro AVATAR_DIR. */
-  private async removeOldAvatar(
-    previousUrl: string | null,
-    newFilename: string,
-  ): Promise<void> {
-    if (!previousUrl) return;
-    // basename neutralizza eventuali tentativi di path traversal.
-    const oldName = basename(previousUrl);
-    if (!oldName || oldName === newFilename) return;
-    try {
-      await fs.unlink(join(AVATAR_DIR, oldName));
-    } catch {
-      // File già assente o non rimovibile: ininfluente.
+  async getAvatar(id: number): Promise<{ data: Buffer; mime: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { avatarData: true, avatarMime: true },
+    });
+    if (!user?.avatarData || !user.avatarMime) {
+      throw new NotFoundException('Avatar non trovato');
     }
+    return { data: user.avatarData, mime: user.avatarMime };
+  }
+
+  private avatarUrl(user: Pick<User, 'id' | 'avatarMime'>): string | null;
+  private avatarUrl(id: number, mime: string | null): string | null;
+  private avatarUrl(userOrId: Pick<User, 'id' | 'avatarMime'> | number, mime?: string | null): string | null {
+    const id = typeof userOrId === 'number' ? userOrId : userOrId.id;
+    const avatarMime = typeof userOrId === 'number' ? mime : userOrId.avatarMime;
+    return avatarMime ? `/api/users/${id}/avatar` : null;
   }
 
   private async requireById(id: number): Promise<User> {

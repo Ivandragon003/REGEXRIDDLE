@@ -1,0 +1,19 @@
+.avatar {
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+}
+
+img.avatar {
+  object-fit: cover;
+}
+
+.avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}

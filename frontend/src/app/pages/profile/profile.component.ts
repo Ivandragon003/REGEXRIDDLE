@@ -58,7 +58,7 @@ export class ProfileComponent {
   handleSave(): void {
     this.feedback.set(null);
     this.saving.set(true);
-    this.userApi.updateMe({ username: this.username(), email: this.email() }).subscribe({
+    this.userApi.updateMe({ username: this.username() }).subscribe({
       next: (updated) => {
         this.auth.updateUser({ username: updated.username });
         this.profile.set(updated);

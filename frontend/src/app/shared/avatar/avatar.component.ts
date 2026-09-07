@@ -7,6 +7,7 @@ import { resolveAssetUrl } from '../../core/api/api.constants';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './avatar.component.html',
+  styleUrl: './avatar.component.css',
 })
 export class AvatarComponent {
   @Input() username: string | null | undefined = '';

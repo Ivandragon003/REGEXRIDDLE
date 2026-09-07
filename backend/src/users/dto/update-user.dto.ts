@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -6,8 +6,4 @@ export class UpdateUserDto {
   @MinLength(3)
   @MaxLength(30)
   username?: string;
-
-  @IsOptional()
-  @IsEmail({}, { message: 'email non valida' })
-  email?: string;
 }

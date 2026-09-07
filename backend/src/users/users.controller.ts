@@ -2,12 +2,15 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Put,
   Post,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -34,6 +37,12 @@ export class UsersController {
   @ApiOperation({ summary: 'Aggiorna username e/o email dell\'utente autenticato' })
   updateMe(@Body() dto: UpdateUserDto, @CurrentUser() user: AuthUser) {
     return this.users.updateMe(user.userId, dto);
+  }
+
+  @Get(':id/avatar')
+  async getAvatar(@Param('id') id: string, @Res() response: Response) {
+    const avatar = await this.users.getAvatar(Number(id));
+    response.type(avatar.mime).send(avatar.data);
   }
 
   @Post('me/avatar')

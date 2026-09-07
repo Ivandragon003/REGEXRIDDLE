@@ -3,7 +3,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
-import { join } from 'path';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
@@ -12,7 +11,8 @@ async function bootstrap() {
 
   // Security headers (HSTS, X-Content-Type-Options, frameguard, ecc.).
   // crossOriginResourcePolicy 'cross-origin' consente al frontend (porta 5173)
-  // di caricare gli avatar serviti da /uploads senza essere bloccato dal CORP.
+  // di caricare gli avatar serviti dall'endpoint /api/users/:id/avatar senza
+  // essere bloccato dal CORP.
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -26,7 +26,6 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    credentials: true,
   });
 
   // Validazione automatica dei DTO: rimuove i campi non previsti (whitelist) e
@@ -41,9 +40,6 @@ async function bootstrap() {
 
   // Risposte di errore in formato { error, status }
   app.useGlobalFilters(new AllExceptionsFilter());
-
-  // File caricati (avatar) serviti su /uploads/**
-  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads/' });
 
   // Swagger UI
   const swaggerConfig = new DocumentBuilder()

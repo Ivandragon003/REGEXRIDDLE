@@ -12,7 +12,11 @@ model User {
   username     String      @unique
   email        String      @unique
   passwordHash String
-  avatarUrl    String?
+  avatarData   Bytes?
+  avatarMime   String?
+  // Compatibilità con database esistenti: verrà rimossa con una migrazione
+  // esplicita dopo aver convertito o scartato gli avatar precedenti.
+  legacyAvatarUrl String? @map("avatarUrl")
   createdAt    DateTime    @default(now())
   challenges   Challenge[]
   attempts     Attempt[]

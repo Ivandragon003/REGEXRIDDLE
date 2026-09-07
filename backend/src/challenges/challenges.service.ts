@@ -41,35 +41,10 @@ export class ChallengesService {
   ) {}
 
   async create(dto: CreateChallengeDto, userId: number): Promise<ChallengePublicDto> {
-    // 1. Sintassi della regex segreta
     this.regex.validateSyntax(dto.secretRegex);
     const regex = dto.secretRegex;
 
-    // 2-3. Coerenza degli esempi pubblici
-    if (!(await this.regex.matchesSafely(regex, dto.exampleMatch))) {
-      throw new BadRequestException("L'esempio positivo non soddisfa la regex segreta");
-    }
-    if (await this.regex.matchesSafely(regex, dto.exampleNoMatch)) {
-      throw new BadRequestException("L'esempio negativo non dovrebbe soddisfare la regex segreta");
-    }
-
-    // 5. Coerenza delle stringhe di controllo
-    const posResults = await this.regex.matchesAll(regex, dto.controlStringsPositive);
-    posResults.forEach((ok, i) => {
-      if (!ok) {
-        throw new BadRequestException(
-          `La stringa di controllo positiva "${dto.controlStringsPositive[i]}" non soddisfa la regex segreta`,
-        );
-      }
-    });
-    const negResults = await this.regex.matchesAll(regex, dto.controlStringsNegative);
-    negResults.forEach((ok, i) => {
-      if (ok) {
-        throw new BadRequestException(
-          `La stringa di controllo negativa "${dto.controlStringsNegative[i]}" non dovrebbe soddisfare la regex segreta`,
-        );
-      }
-    });
+    await this.validateChallengeInputs(regex, dto);
 
     const challenge = await this.prisma.challenge.create({
       data: {
@@ -191,6 +166,39 @@ export class ChallengesService {
       throw new NotFoundException('Sfida non trovata');
     }
     return challenge;
+  }
+
+  private async validateChallengeInputs(regex: string, dto: CreateChallengeDto): Promise<void> {
+    const [exampleMatch, exampleNoMatch] = await this.regex.matchesAll(regex, [
+      dto.exampleMatch,
+      dto.exampleNoMatch,
+    ]);
+    if (!exampleMatch) {
+      throw new BadRequestException("L'esempio positivo non soddisfa la regex segreta");
+    }
+    if (exampleNoMatch) {
+      throw new BadRequestException("L'esempio negativo non dovrebbe soddisfare la regex segreta");
+    }
+
+    await this.validateControlStrings(regex, dto.controlStringsPositive, true);
+    await this.validateControlStrings(regex, dto.controlStringsNegative, false);
+  }
+
+  private async validateControlStrings(
+    regex: string,
+    inputs: string[],
+    shouldMatch: boolean,
+  ): Promise<void> {
+    const results = await this.regex.matchesAll(regex, inputs);
+    const invalidIndex = results.findIndex((matches) => matches !== shouldMatch);
+    if (invalidIndex === -1) return;
+
+    const kind = shouldMatch ? 'positiva' : 'negativa';
+    throw new BadRequestException(
+      shouldMatch
+        ? `La stringa di controllo ${kind} "${inputs[invalidIndex]}" non soddisfa la regex segreta`
+        : `La stringa di controllo ${kind} "${inputs[invalidIndex]}" non dovrebbe soddisfare la regex segreta`,
+    );
   }
 
   /**

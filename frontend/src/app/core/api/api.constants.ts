@@ -6,7 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 //   - sviluppo (ng serve): http://localhost:8080/api
 export const API_BASE_URL = isDevMode() ? 'http://localhost:8080/api' : '/api';
 
-// Origine del backend, per risolvere gli asset statici (es. avatar in /uploads).
+// Origine del backend, necessaria per risolvere gli URL relativi dell'API.
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
 
 export function resolveAssetUrl(path: string | null | undefined): string | null {

@@ -1,19 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Worker } from 'worker_threads';
-
-// Codice eseguito in un worker thread isolato: valuta la regex su una lista
-// di input. Se la regex è catastrofica (ReDoS), il worker viene terminato dal
-// watchdog nel thread principale.
-const WORKER_CODE = `
-const { parentPort, workerData } = require('worker_threads');
-try {
-  const re = new RegExp(workerData.regex);
-  const results = workerData.inputs.map((s) => re.test(s));
-  parentPort.postMessage({ ok: true, results });
-} catch (e) {
-  parentPort.postMessage({ ok: false, error: String((e && e.message) || e) });
-}
-`;
+import { join } from 'path';
 
 @Injectable()
 export class RegexService {
@@ -45,8 +32,7 @@ export class RegexService {
    */
   matchesAll(regex: string, inputs: string[]): Promise<boolean[]> {
     return new Promise((resolve, reject) => {
-      const worker = new Worker(WORKER_CODE, {
-        eval: true,
+      const worker = new Worker(join(__dirname, 'regex.worker.js'), {
         workerData: { regex, inputs },
       });
 

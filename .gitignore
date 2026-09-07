@@ -11,12 +11,13 @@ frontend/.env.production
 frontend/playwright-report/
 frontend/test-results/
 
-# Upload avatar (generati a runtime)
+# Dati runtime legacy (non versionare upload locali)
 uploads/
 
 # IDE
 .idea/
 .vscode/
+.claude/
 *.iml
 
 # OS

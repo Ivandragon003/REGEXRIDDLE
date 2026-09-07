@@ -15,7 +15,6 @@ export interface UserProfile {
 
 export interface UpdateUserPayload {
   username: string;
-  email: string;
 }
 
 @Injectable({ providedIn: 'root' })

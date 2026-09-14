@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ChallengesApiService } from '../../core/api/challenges-api.service';
 import { errorMessage } from '../../core/api/api.constants';
 
 const MAX_CONTROL = 10;
+type ControlKind = 'positive' | 'negative';
 
 function compileRegex(pattern: string): RegExp | null {
   try {
@@ -42,48 +43,41 @@ export class CreateChallengeComponent {
   secretRegex = signal('');
   exampleMatch = signal('');
   exampleNoMatch = signal('');
-  positives = signal<string[]>(['']);
-  negatives = signal<string[]>(['']);
+  controls: Record<ControlKind, ReturnType<typeof signal<string[]>>> = {
+    positive: signal(['']),
+    negative: signal(['']),
+  };
   errors = signal<FormErrors>({});
   isPending = signal(false);
   createError = signal('');
 
-  get re(): RegExp | null {
-    return compileRegex(this.secretRegex());
-  }
+  private readonly compiledRegex = computed(() => compileRegex(this.secretRegex()));
 
   get regexValid(): boolean {
-    return this.secretRegex() !== '' && this.re !== null;
+    return this.secretRegex() !== '' && this.compiledRegex() !== null;
   }
 
-  addPositive(): void {
-    if (this.positives().length < MAX_CONTROL) this.positives.update((v) => [...v, '']);
+  addControl(kind: ControlKind): void {
+    const control = this.controls[kind];
+    if (control().length < MAX_CONTROL) control.update((values) => [...values, '']);
   }
-  removePositive(i: number): void {
-    this.positives.update((v) => v.filter((_, idx) => idx !== i));
+  removeControl(kind: ControlKind, index: number): void {
+    this.controls[kind].update((values) => values.filter((_, current) => current !== index));
   }
-  updatePositive(i: number, value: string): void {
-    this.positives.update((v) => v.map((item, idx) => (idx === i ? value : item)));
-  }
-
-  addNegative(): void {
-    if (this.negatives().length < MAX_CONTROL) this.negatives.update((v) => [...v, '']);
-  }
-  removeNegative(i: number): void {
-    this.negatives.update((v) => v.filter((_, idx) => idx !== i));
-  }
-  updateNegative(i: number, value: string): void {
-    this.negatives.update((v) => v.map((item, idx) => (idx === i ? value : item)));
+  updateControl(kind: ControlKind, index: number, value: string): void {
+    this.controls[kind].update((values) =>
+      values.map((current, currentIndex) => (currentIndex === index ? value : current))
+    );
   }
 
   controlStatus(value: string, shouldMatch: boolean): boolean | null {
     if (!this.regexValid || value === '') return null;
-    return this.re!.test(value) === shouldMatch;
+    return this.compiledRegex()!.test(value) === shouldMatch;
   }
 
   private validate(): { ok: boolean; cleanPos: string[]; cleanNeg: string[] } {
     const e: FormErrors = {};
-    const re = this.re;
+    const re = this.compiledRegex();
 
     if (!this.title().trim()) e.title = 'Il titolo è obbligatorio';
     if (!this.secretRegex().trim()) e.secretRegex = 'La regex è obbligatoria';
@@ -96,8 +90,8 @@ export class CreateChallengeComponent {
     else if (re && re.test(this.exampleNoMatch()))
       e.exampleNoMatch = 'Questo esempio soddisfa la regex (non dovrebbe)';
 
-    const cleanPos = this.positives().filter((s) => s !== '');
-    const cleanNeg = this.negatives().filter((s) => s !== '');
+    const cleanPos = this.controls.positive().filter((s) => s !== '');
+    const cleanNeg = this.controls.negative().filter((s) => s !== '');
 
     if (cleanPos.length < 1) e.positives = 'Aggiungi almeno una stringa positiva';
     else if (re && cleanPos.some((s) => !re.test(s)))

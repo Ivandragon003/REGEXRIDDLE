@@ -20,12 +20,6 @@ export class RegexService {
     }
   }
 
-  /** Testa se la regex soddisfa l'input (con timeout anti-ReDoS). */
-  async matchesSafely(regex: string, input: string): Promise<boolean> {
-    const [result] = await this.matchesAll(regex, [input]);
-    return result;
-  }
-
   /**
    * Valuta la regex su più input in un worker thread con timeout complessivo.
    * @returns un array di booleani, uno per input.

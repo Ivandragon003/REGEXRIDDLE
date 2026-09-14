@@ -52,7 +52,6 @@
 
 .features {
   display: grid;
-  /* Si adatta da sola: 3 → 2 → 1 colonna a seconda dello spazio disponibile. */
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1.25rem;
 }

@@ -7,9 +7,6 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-/**
- * Trasforma ogni eccezione in una risposta JSON { "error": "...", "status": N }.
- */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {

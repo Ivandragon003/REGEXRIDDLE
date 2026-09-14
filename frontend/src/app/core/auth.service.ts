@@ -38,7 +38,6 @@ export class AuthService {
     this.userSignal.set(null);
   }
 
-  // Aggiorna i dati utente locali (es. dopo cambio username/avatar).
   updateUser(patch: Partial<AuthUser>): void {
     const next = { ...(this.userSignal() as AuthUser), ...patch };
     localStorage.setItem('user', JSON.stringify(next));

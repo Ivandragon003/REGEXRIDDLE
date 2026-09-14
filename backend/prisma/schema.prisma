@@ -14,8 +14,6 @@ model User {
   passwordHash String
   avatarData   Bytes?
   avatarMime   String?
-  // Compatibilità con database esistenti: verrà rimossa con una migrazione
-  // esplicita dopo aver convertito o scartato gli avatar precedenti.
   legacyAvatarUrl String? @map("avatarUrl")
   createdAt    DateTime    @default(now())
   challenges   Challenge[]
@@ -32,7 +30,6 @@ model Challenge {
   description            String?
   exampleMatch           String
   exampleNoMatch         String
-  // Segreti: mai esposti dalle API
   secretRegex            String
   controlStringsPositive Json
   controlStringsNegative Json
@@ -57,8 +54,6 @@ model Attempt {
   solved          Boolean
   attemptedAt     DateTime  @default(now())
 
-  // Indici a supporto delle aggregazioni (conteggi per sfida, statistiche e
-  // classifica per utente, lookup delle sfide risolte).
   @@index([challengeId])
   @@index([userId])
   @@index([userId, solved])

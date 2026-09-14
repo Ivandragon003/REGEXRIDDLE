@@ -9,27 +9,19 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Security headers (HSTS, X-Content-Type-Options, frameguard, ecc.).
-  // crossOriginResourcePolicy 'cross-origin' consente al frontend (porta 5173)
-  // di caricare gli avatar serviti dall'endpoint /api/users/:id/avatar senza
-  // essere bloccato dal CORP.
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
 
-  // Tutte le route REST sotto /api
   app.setGlobalPrefix('api');
 
-  // CORS per il frontend in sviluppo
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
-  // Validazione automatica dei DTO: rimuove i campi non previsti (whitelist) e
-  // rifiuta con 400 le richieste che ne contengono (forbidNonWhitelisted).
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -38,10 +30,8 @@ async function bootstrap() {
     }),
   );
 
-  // Risposte di errore in formato { error, status }
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Swagger UI
   const swaggerConfig = new DocumentBuilder()
     .setTitle('RegexRiddle API')
     .setDescription('REST API per la piattaforma di sfide basate su espressioni regolari')

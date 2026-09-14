@@ -91,18 +91,14 @@ export class ChallengesService {
     proposedRegex: string,
     userId: number,
   ): Promise<AttemptResultDto> {
-    // 1. Sintassi del tentativo
     this.regex.validateSyntax(proposedRegex);
 
-    // 2. Sfida esistente
     const challenge = await this.requireChallenge(challengeId);
 
-    // L'autore non può tentare la propria sfida
     if (challenge.authorId === userId) {
       throw new ForbiddenException('Non puoi tentare una sfida creata da te');
     }
 
-    // Una sfida già risolta non può essere ritentata
     const alreadySolved = await this.prisma.attempt.findFirst({
       where: { challengeId, userId, solved: true },
     });
@@ -110,7 +106,6 @@ export class ChallengesService {
       throw new ForbiddenException('Hai già risolto questa sfida');
     }
 
-    // 3-4. Valutazione sulle stringhe di controllo segrete
     const positives = challenge.controlStringsPositive as unknown as string[];
     const negatives = challenge.controlStringsNegative as unknown as string[];
     const totalPositive = positives.length;
@@ -138,7 +133,6 @@ export class ChallengesService {
     return this.toResultDto(attempt);
   }
 
-  /** Id delle sfide che l'utente ha già risolto (almeno un tentativo risolutivo). */
   async getSolvedChallengeIds(userId: number): Promise<number[]> {
     const rows = await this.prisma.attempt.findMany({
       where: { userId, solved: true },
@@ -201,10 +195,6 @@ export class ChallengesService {
     );
   }
 
-  /**
-   * Mappa una lista di sfide nei rispettivi DTO pubblici aggregando i conteggi
-   * dei tentativi con un numero costante di query (anziché 2 per sfida).
-   */
   private async toPublicDtoList(list: ChallengeWithAuthor[]): Promise<ChallengePublicDto[]> {
     const counts = await this.countsFor(list.map((c) => c.id));
     return list.map((c) => {
@@ -213,11 +203,6 @@ export class ChallengesService {
     });
   }
 
-  /**
-   * Conteggi (totali e risolutivi) dei tentativi per le sfide indicate, calcolati
-   * lato database con due sole query di aggregazione (GROUP BY) indipendentemente
-   * dal numero di sfide.
-   */
   private async countsFor(
     challengeIds: number[],
   ): Promise<Map<number, { total: number; solved: number }>> {

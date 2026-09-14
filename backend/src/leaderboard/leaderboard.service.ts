@@ -9,27 +9,17 @@ export interface LeaderboardEntryDto {
   avgAttempts: number;
 }
 
-/**
- * Classifica: aggrega i tentativi per utente.
- * Ordine: solvedCount DESC, poi avgAttempts ASC a parità.
- *
- * L'aggregazione dei conteggi è delegata al database (GROUP BY): non viene
- * caricato in memoria l'intero storico dei tentativi, ma solo le coppie
- * (utente, sfida) aggregate.
- */
 @Injectable()
 export class LeaderboardService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getLeaderboard(): Promise<LeaderboardEntryDto[]> {
-    // Coppie (utente, sfida) risolte almeno una volta.
     const solvedPairs = await this.prisma.attempt.groupBy({
       by: ['userId', 'challengeId'],
       where: { solved: true },
     });
     if (solvedPairs.length === 0) return [];
 
-    // Totale tentativi per coppia (utente, sfida).
     const totalsPairs = await this.prisma.attempt.groupBy({
       by: ['userId', 'challengeId'],
       _count: { _all: true },
@@ -39,7 +29,6 @@ export class LeaderboardService {
       totalByPair.set(`${t.userId}:${t.challengeId}`, t._count._all);
     }
 
-    // Aggrega per utente sulle sole sfide risolte.
     const byUser = new Map<number, { solvedCount: number; sum: number }>();
     for (const p of solvedPairs) {
       const total = totalByPair.get(`${p.userId}:${p.challengeId}`) ?? 0;
@@ -49,7 +38,6 @@ export class LeaderboardService {
       byUser.set(p.userId, acc);
     }
 
-    // Dati anagrafici degli utenti in classifica (una sola query).
     const users = await this.prisma.user.findMany({
       where: { id: { in: [...byUser.keys()] } },
       select: { id: true, username: true, avatarMime: true },

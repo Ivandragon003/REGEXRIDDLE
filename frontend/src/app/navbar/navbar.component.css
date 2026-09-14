@@ -28,7 +28,6 @@
   color: var(--accent);
 }
 
-/* Menu (desktop: riga; mobile: pannello a discesa) */
 .menu {
   display: flex;
   align-items: center;
@@ -97,7 +96,6 @@
   max-width: 220px;
 }
 
-/* Username lungo: troncamento con ellissi invece di sfondare la navbar. */
 .userName {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -156,7 +154,6 @@
   border-radius: 2px;
 }
 
-/* ---------- Mobile ---------- */
 @media (max-width: 768px) {
   .hamburger {
     display: flex;

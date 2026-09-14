@@ -46,8 +46,6 @@ export class ChallengesListComponent {
     const challenges = this.challenges();
     if (!challenges) return [];
     const q = this.search().trim().toLowerCase();
-    // Normalizzo a stringa entrambi i lati del confronto: così l'appartenenza
-    // regge anche se un id arrivasse come stringa invece che come numero.
     const solvedSet = new Set(this.solvedIds().map(String));
     const user = this.auth.user();
     const author = this.authorFilter();

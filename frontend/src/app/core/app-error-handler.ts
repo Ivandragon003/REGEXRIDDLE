@@ -1,7 +1,5 @@
 import { ErrorHandler, Injectable, signal } from '@angular/core';
 
-// Stato condiviso: AppComponent lo legge per mostrare la UI di fallback
-// invece di una schermata bianca quando un componente lancia un errore.
 @Injectable({ providedIn: 'root' })
 export class AppErrorState {
   readonly hasError = signal(false);

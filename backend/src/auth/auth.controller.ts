@@ -5,8 +5,6 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
-// Limite anti brute-force sugli endpoint di autenticazione:
-// max 5 tentativi al minuto per IP (più stretto del limite globale).
 @Throttle({ default: { limit: 5, ttl: 60_000 } })
 @ApiTags('Autenticazione')
 @Controller('auth')

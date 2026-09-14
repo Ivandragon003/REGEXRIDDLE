@@ -15,12 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      // Garantito presente e valido da validateEnv() all'avvio.
       secretOrKey: config.get<string>('JWT_SECRET') as string,
     });
   }
 
-  // Il valore restituito viene iniettato in request.user.
   validate(payload: JwtPayload): AuthUser {
     return { userId: payload.sub, username: payload.username };
   }

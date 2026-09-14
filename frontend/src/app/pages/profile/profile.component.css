@@ -75,7 +75,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* Titolo lungo: tronca con ellissi senza schiacciare il contatore a destra. */
 .challengeLink > span:first-child {
   overflow: hidden;
   text-overflow: ellipsis;

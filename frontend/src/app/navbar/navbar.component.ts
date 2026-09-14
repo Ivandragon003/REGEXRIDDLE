@@ -22,7 +22,6 @@ export class NavbarComponent {
   menuOpen = signal(false);
   dropdownOpen = signal(false);
 
-  // Chiude il dropdown cliccando fuori.
   @HostListener('document:mousedown', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const dropdown = this.elementRef.nativeElement.querySelector('[data-user-menu]');

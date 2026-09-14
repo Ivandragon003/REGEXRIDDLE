@@ -32,8 +32,6 @@
   padding: 0.35rem 0.7rem;
   font-family: var(--font-mono);
   max-width: 100%;
-  /* Le stringhe di esempio possono essere lunghe e senza spazi: vanno spezzate
-     per non uscire dalla card. */
   overflow-wrap: anywhere;
   word-break: break-word;
 }

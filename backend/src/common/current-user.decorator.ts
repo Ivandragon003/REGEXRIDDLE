@@ -5,7 +5,6 @@ export interface AuthUser {
   username: string;
 }
 
-/** Estrae l'utente autenticato (valorizzato da JwtStrategy) dalla request. */
 export const CurrentUser = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): AuthUser => {
     const request = ctx.switchToHttp().getRequest();

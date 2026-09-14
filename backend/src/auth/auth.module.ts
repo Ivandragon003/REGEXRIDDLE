@@ -14,9 +14,7 @@ import { JwtStrategy } from './jwt.strategy';
       useFactory: (config: ConfigService) => {
         const ms = Number(config.get('JWT_EXPIRATION') ?? 86400000);
         return {
-          // Garantito presente e valido da validateEnv() all'avvio.
           secret: config.get<string>('JWT_SECRET') as string,
-          // jsonwebtoken usa i secondi quando expiresIn è numerico
           signOptions: { expiresIn: Math.floor(ms / 1000) },
         };
       },

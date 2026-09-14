@@ -6,13 +6,11 @@ import { join } from 'path';
 export class RegexService {
   private static readonly TIMEOUT_MS = 500;
 
-  /** Valida la sintassi della regex; lancia 400 se non è valida. */
   validateSyntax(regex: string): void {
     if (!regex || regex.trim() === '') {
       throw new BadRequestException('La regex non può essere vuota');
     }
     try {
-      // La compilazione non è soggetta a ReDoS: il rischio è nella valutazione.
       // eslint-disable-next-line no-new
       new RegExp(regex);
     } catch {
@@ -20,10 +18,6 @@ export class RegexService {
     }
   }
 
-  /**
-   * Valuta la regex su più input in un worker thread con timeout complessivo.
-   * @returns un array di booleani, uno per input.
-   */
   matchesAll(regex: string, inputs: string[]): Promise<boolean[]> {
     return new Promise((resolve, reject) => {
       const worker = new Worker(join(__dirname, 'regex.worker.js'), {

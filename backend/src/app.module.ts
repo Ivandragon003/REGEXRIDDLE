@@ -12,8 +12,6 @@ import { validateEnv } from './common/env.validation';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
-    // Rate limiting globale: max 100 richieste al minuto per IP.
-    // Gli endpoint sensibili (/auth) hanno un limite più stretto (vedi controller).
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     PrismaModule,
     AuthModule,
@@ -22,7 +20,6 @@ import { validateEnv } from './common/env.validation';
     LeaderboardModule,
   ],
   providers: [
-    // Applica il rate limiting a tutte le route.
     { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })

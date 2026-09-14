@@ -45,7 +45,6 @@
   min-width: 0;
 }
 
-/* Lo username può essere lungo: deve spezzarsi, non sovrapporsi alle colonne. */
 .userCell > span {
   min-width: 0;
   overflow-wrap: anywhere;

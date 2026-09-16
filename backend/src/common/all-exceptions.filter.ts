@@ -20,6 +20,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = exception.getStatus();
       const res = exception.getResponse();
       message = this.extractMessage(res);
+    } else if (this.isFileTooLargeError(exception)) {
+      status = HttpStatus.PAYLOAD_TOO_LARGE;
+      message = "L'immagine non può superare 2 MB";
     }
 
     response.status(status).json({ error: message, status });
@@ -37,5 +40,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return obj.message;
     }
     return 'Richiesta non valida';
+  }
+
+  private isFileTooLargeError(exception: unknown): exception is { code: string } {
+    return (
+      typeof exception === 'object' &&
+      exception !== null &&
+      'code' in exception &&
+      (exception as { code?: unknown }).code === 'LIMIT_FILE_SIZE'
+    );
   }
 }

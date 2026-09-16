@@ -1,45 +1,57 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { Component, computed, inject, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import {
   Attempt,
   AttemptResult,
   Challenge,
+  ChallengeLeaderboardEntry,
   ChallengesApiService,
-} from '../../core/api/challenges-api.service';
-import { errorMessage } from '../../core/api/api.constants';
-import { AuthService } from '../../core/auth.service';
+} from "../../core/api/challenges-api.service";
+import { errorMessage } from "../../core/api/api.constants";
+import { AuthService } from "../../core/auth.service";
+import { ChallengeLeaderboardComponent } from "../../shared/challenge-leaderboard/challenge-leaderboard.component";
 
 @Component({
-  selector: 'app-challenge-detail',
+  selector: "app-challenge-detail",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './challenge-detail.component.html',
-  styleUrl: './challenge-detail.component.css',
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    ChallengeLeaderboardComponent,
+  ],
+  templateUrl: "./challenge-detail.component.html",
+  styleUrl: "./challenge-detail.component.css",
 })
 export class ChallengeDetailComponent {
   private route = inject(ActivatedRoute);
   private challengesApi = inject(ChallengesApiService);
   auth = inject(AuthService);
 
-  id = '';
+  id = "";
 
   challenge = signal<Challenge | null>(null);
   isLoading = signal(true);
   isError = signal(false);
 
   attempts = signal<Attempt[]>([]);
+  leaderboard = signal<ChallengeLeaderboardEntry[]>([]);
 
-  regex = signal('');
-  clientError = signal('');
+  regex = signal("");
+  clientError = signal("");
   isPending = signal(false);
-  serverError = signal('');
+  serverError = signal("");
   result = signal<AttemptResult | null>(null);
 
   isOwner = computed(() => {
     const c = this.challenge();
-    return this.auth.isAuthenticated() && c != null && this.auth.user()?.username === c.authorUsername;
+    return (
+      this.auth.isAuthenticated() &&
+      c != null &&
+      this.auth.user()?.username === c.authorUsername
+    );
   });
 
   solvedAttempt = computed(() => this.attempts().find((a) => a.solved) ?? null);
@@ -47,12 +59,12 @@ export class ChallengeDetailComponent {
 
   constructor() {
     this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
+      const id = params.get("id");
       if (!id) return;
       this.id = id;
-      this.regex.set('');
-      this.clientError.set('');
-      this.serverError.set('');
+      this.regex.set("");
+      this.clientError.set("");
+      this.serverError.set("");
       this.result.set(null);
       this.load();
     });
@@ -72,6 +84,10 @@ export class ChallengeDetailComponent {
       },
     });
 
+    this.challengesApi.getLeaderboard(this.id).subscribe({
+      next: (data) => this.leaderboard.set(data),
+    });
+
     if (this.auth.isAuthenticated()) {
       this.loadAttempts();
     }
@@ -84,21 +100,21 @@ export class ChallengeDetailComponent {
   }
 
   handleSubmit(): void {
-    this.clientError.set('');
+    this.clientError.set("");
     const value = this.regex();
     if (!value.trim()) {
-      this.clientError.set('Inserisci una regex');
+      this.clientError.set("Inserisci una regex");
       return;
     }
     try {
       new RegExp(value);
     } catch {
-      this.clientError.set('La regex non è sintatticamente valida');
+      this.clientError.set("La regex non è sintatticamente valida");
       return;
     }
 
     this.isPending.set(true);
-    this.serverError.set('');
+    this.serverError.set("");
     this.challengesApi.attempt(this.id, value).subscribe({
       next: (res) => {
         this.result.set(res);
@@ -113,12 +129,12 @@ export class ChallengeDetailComponent {
   }
 
   formatDateTime(iso: string): string {
-    if (!iso) return '';
-    return new Date(iso).toLocaleString('it-IT', {
-      day: '2-digit',
-      month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+    if (!iso) return "";
+    return new Date(iso).toLocaleString("it-IT", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   }
 

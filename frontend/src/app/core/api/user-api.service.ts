@@ -13,20 +13,12 @@ export interface UserProfile {
   avgAttempts: number;
 }
 
-export interface UpdateUserPayload {
-  username: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class UserApiService {
   private http = inject(HttpClient);
 
   getMe(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${API_BASE_URL}/users/me`);
-  }
-
-  updateMe(data: UpdateUserPayload): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${API_BASE_URL}/users/me`, data);
   }
 
   uploadAvatar(file: File): Observable<{ avatarUrl: string }> {

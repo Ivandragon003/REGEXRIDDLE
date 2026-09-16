@@ -33,6 +33,13 @@ export interface AttemptResult {
   totalNegative: number;
 }
 
+export interface ChallengeLeaderboardEntry {
+  rank: number;
+  username: string;
+  attempts: number;
+  solvedAt: string;
+}
+
 export interface CreateChallengePayload {
   title: string;
   description: string | null;
@@ -73,5 +80,9 @@ export class ChallengesApiService {
 
   getAttempts(id: string): Observable<Attempt[]> {
     return this.http.get<Attempt[]>(`${API_BASE_URL}/challenges/${id}/attempts`);
+  }
+
+  getLeaderboard(id: string): Observable<ChallengeLeaderboardEntry[]> {
+    return this.http.get<ChallengeLeaderboardEntry[]>(`${API_BASE_URL}/challenges/${id}/leaderboard`);
   }
 }

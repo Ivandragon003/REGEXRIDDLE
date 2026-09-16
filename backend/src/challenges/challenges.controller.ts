@@ -48,6 +48,12 @@ export class ChallengesController {
     return this.challenges.findOnePublic(id);
   }
 
+  @Get(':id/leaderboard')
+  @ApiOperation({ summary: 'Classifica pubblica dei risolutori di una sfida' })
+  challengeLeaderboard(@Param('id', ParseIntPipe) id: number) {
+    return this.challenges.getChallengeLeaderboard(id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

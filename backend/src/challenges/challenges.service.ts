@@ -31,6 +31,13 @@ export interface AttemptResultDto {
   attemptedAt: Date;
 }
 
+export interface ChallengeLeaderboardEntryDto {
+  rank: number;
+  username: string;
+  attempts: number;
+  solvedAt: Date;
+}
+
 type ChallengeWithAuthor = Challenge & { author: User | null };
 
 @Injectable()
@@ -149,6 +156,40 @@ export class ChallengesService {
       orderBy: { attemptedAt: 'desc' },
     });
     return list.map((a) => this.toResultDto(a));
+  }
+
+  async getChallengeLeaderboard(id: number): Promise<ChallengeLeaderboardEntryDto[]> {
+    await this.requireChallenge(id);
+    const solvedAttempts = await this.prisma.attempt.findMany({
+      where: { challengeId: id, solved: true },
+      orderBy: { attemptedAt: 'asc' },
+      select: { userId: true, attemptedAt: true },
+    });
+    if (solvedAttempts.length === 0) return [];
+
+    const firstSolvedByUser = new Map<number, Date>();
+    for (const attempt of solvedAttempts) {
+      if (!firstSolvedByUser.has(attempt.userId)) firstSolvedByUser.set(attempt.userId, attempt.attemptedAt);
+    }
+    const userIds = [...firstSolvedByUser.keys()];
+    const attemptCounts = await this.prisma.attempt.groupBy({
+      by: ['userId'],
+      where: { challengeId: id, userId: { in: userIds } },
+      _count: { _all: true },
+    });
+    const countByUser = new Map(attemptCounts.map((entry) => [entry.userId, entry._count._all]));
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, username: true },
+    });
+    const entries = users.map((user) => ({
+      rank: 0,
+      username: user.username,
+      attempts: countByUser.get(user.id) ?? 0,
+      solvedAt: firstSolvedByUser.get(user.id)!,
+    }));
+    entries.sort((a, b) => a.attempts - b.attempts || a.solvedAt.getTime() - b.solvedAt.getTime());
+    return entries.map((entry, index) => ({ ...entry, rank: index + 1 }));
   }
 
   private async requireChallenge(id: number): Promise<ChallengeWithAuthor> {

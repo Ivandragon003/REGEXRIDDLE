@@ -42,7 +42,11 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthResponse> {
-    const user = await this.prisma.user.findUnique({ where: { username: dto.username } });
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ username: dto.identifier }, { email: dto.identifier }],
+      },
+    });
     if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
       throw new UnauthorizedException('Credenziali non valide');
     }
@@ -50,7 +54,7 @@ export class AuthService {
   }
 
   private buildResponse(user: User): AuthResponse {
-    const token = this.jwt.sign({ sub: user.id, username: user.username });
+    const token = this.jwt.sign({ sub: user.id });
     return { token, username: user.username, userId: user.id };
   }
 }

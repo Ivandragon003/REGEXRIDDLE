@@ -1,0 +1,19 @@
+<section class="card challengeLeaderboard" *ngIf="entries().length > 0">
+  <div class="leaderboardHeading">
+    <div>
+      <p class="sectionKicker">CLASSIFICA DELLA SFIDA</p>
+      <h2>Chi l'ha risolta</h2>
+    </div>
+    <span class="muted">Ordine: meno tentativi</span>
+  </div>
+  <ol class="leaderboardList">
+    <li *ngFor="let entry of entries()">
+      <span class="rank">#{{ entry.rank }}</span>
+      <strong>{{ entry.username }}</strong>
+      <span class="muted">
+        {{ entry.attempts }}
+        {{ entry.attempts === 1 ? "tentativo" : "tentativi" }}
+      </span>
+    </li>
+  </ol>
+</section>

@@ -6,7 +6,6 @@ import { AuthUser } from '../common/current-user.decorator';
 
 interface JwtPayload {
   sub: number;
-  username: string;
 }
 
 @Injectable()
@@ -20,6 +19,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: JwtPayload): AuthUser {
-    return { userId: payload.sub, username: payload.username };
+    return { userId: payload.sub };
   }
 }

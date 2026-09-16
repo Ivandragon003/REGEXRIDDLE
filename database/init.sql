@@ -51,7 +51,7 @@ CREATE INDEX "attempts_userId_idx" ON "attempts"("userId");
 CREATE INDEX "attempts_userId_solved_idx" ON "attempts"("userId", "solved");
 
 INSERT INTO "users" ("id", "username", "email", "passwordHash", "createdAt") VALUES
-  (1, 'ada_regex', 'ada@example.test', '$2a$10$edLQPl8jI9q9qvSlOE7TleydP/8GQFoWk69QIboVy7bKOp8DFRx5m', '2026-09-01 09:00:00'),
+  (1, 'alice', 'alice@example.com', '$2a$10$zmrUqf43SOSTJhN3QNsC5uIaQuh9nI77wouLJtgZL//ToKlFIlZHO', '2026-09-01 09:00:00'),
   (2, 'bruno_pattern', 'bruno@example.test', '$2a$10$edLQPl8jI9q9qvSlOE7TleydP/8GQFoWk69QIboVy7bKOp8DFRx5m', '2026-09-01 09:05:00'),
   (3, 'chiara_match', 'chiara@example.test', '$2a$10$edLQPl8jI9q9qvSlOE7TleydP/8GQFoWk69QIboVy7bKOp8DFRx5m', '2026-09-01 09:10:00'),
   (4, 'diego_escape', 'diego@example.test', '$2a$10$edLQPl8jI9q9qvSlOE7TleydP/8GQFoWk69QIboVy7bKOp8DFRx5m', '2026-09-01 09:15:00'),

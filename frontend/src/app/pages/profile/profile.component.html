@@ -37,28 +37,27 @@
           (change)="handleAvatarChange($event)"
         />
 
-        <form (ngSubmit)="handleSave()" style="margin-top: 1.5rem">
+        <div style="margin-top: 1.5rem">
           <div class="field">
             <label class="label" for="username">Username</label>
             <input
               id="username"
               class="input"
-              [ngModel]="username()"
-              (ngModelChange)="username.set($event)"
-              name="username"
+              [value]="profile()?.username"
+              readonly
             />
+            <span class="muted" style="font-size: 0.8rem; display: block; margin-top: 0.35rem">
+              Lo username è univoco e non può essere modificato dopo la registrazione.
+            </span>
           </div>
           <div class="field">
             <label class="label" for="email">Email</label>
-            <input id="email" type="email" class="input" [value]="email()" disabled />
+            <input id="email" type="email" class="input" [value]="profile()?.email" disabled />
             <span class="muted" style="font-size: 0.8rem; display: block; margin-top: 0.35rem">
               L'email non può essere modificata dopo la registrazione.
             </span>
           </div>
-          <button type="submit" class="btn btn-primary" [disabled]="saving()">
-            {{ saving() ? 'Salvataggio...' : 'Salva modifiche' }}
-          </button>
-        </form>
+        </div>
       </section>
 
       <div class="stack">

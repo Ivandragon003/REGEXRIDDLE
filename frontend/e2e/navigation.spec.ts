@@ -21,6 +21,16 @@ test('la navbar porta alla pagina Sfide', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Sfide' })).toBeVisible();
 });
 
+test('le sfide e le loro statistiche sono visibili senza accesso', async ({ page }) => {
+  await page.goto('/sfide');
+  await expect(page.getByRole('heading', { name: 'Sfide' })).toBeVisible();
+  await expect(page.getByText('Qualcosa è andato storto')).not.toBeVisible();
+  await page.locator('app-challenge-card').first().click();
+  await expect(page.getByLabel('Statistiche della sfida')).toBeVisible();
+  await expect(page.getByText('Accedi per partecipare alla sfida.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Il tuo tentativo' })).not.toBeVisible();
+});
+
 test('la navbar porta alla pagina Classifica', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'Classifica' }).click();
@@ -36,7 +46,7 @@ test('una rotta inesistente mostra la pagina 404', async ({ page }) => {
 test('il login mostra gli errori dei campi obbligatori', async ({ page }) => {
   await page.goto('/login');
   await page.locator('form').getByRole('button', { name: 'Accedi' }).click();
-  await expect(page.getByText('Lo username è obbligatorio')).toBeVisible();
+  await expect(page.getByText('Inserisci email o username')).toBeVisible();
   await expect(page.getByText('La password è obbligatoria')).toBeVisible();
 });
 

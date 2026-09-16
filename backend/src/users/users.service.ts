@@ -1,13 +1,11 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { StatsService } from '../stats/stats.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 export interface UserProfileDto {
   username: string;
@@ -59,23 +57,6 @@ export class UsersService {
       totalAttempts: stats.totalAttempts,
       avgAttempts: stats.avgAttempts,
     };
-  }
-
-  async updateMe(userId: number, dto: UpdateUserDto): Promise<UserProfileDto> {
-    const user = await this.requireById(userId);
-
-    if (dto.username && dto.username !== user.username) {
-      if (await this.prisma.user.findUnique({ where: { username: dto.username } })) {
-        throw new ConflictException('Username già in uso');
-      }
-    }
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        username: dto.username ?? undefined,
-      },
-    });
-    return this.getMe(user.id);
   }
 
   async uploadAvatar(

@@ -8,8 +8,7 @@
     "dev": "ng serve --port 5173",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test:e2e": "playwright test",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@angular/common": "^18.2.0",

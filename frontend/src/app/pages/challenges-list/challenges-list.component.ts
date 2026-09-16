@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { retry } from 'rxjs';
 import { Challenge, ChallengesApiService } from '../../core/api/challenges-api.service';
 import { AuthService } from '../../core/auth.service';
 import { ChallengeCardComponent } from '../../shared/challenge-card/challenge-card.component';
@@ -67,7 +68,7 @@ export class ChallengesListComponent {
   load(): void {
     this.isLoading.set(true);
     this.isError.set(false);
-    this.challengesApi.getAll().subscribe({
+    this.challengesApi.getAll().pipe(retry({ count: 2, delay: 400 })).subscribe({
       next: (data) => {
         this.challenges.set(data);
         this.isLoading.set(false);

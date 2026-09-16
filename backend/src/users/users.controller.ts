@@ -1,9 +1,8 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
-  Put,
+  ParseIntPipe,
   Post,
   Res,
   UploadedFile,
@@ -14,7 +13,6 @@ import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser, AuthUser } from '../common/current-user.decorator';
 
@@ -31,17 +29,9 @@ export class UsersController {
     return this.users.getMe(user.userId);
   }
 
-  @Put('me')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Aggiorna username e/o email dell\'utente autenticato' })
-  updateMe(@Body() dto: UpdateUserDto, @CurrentUser() user: AuthUser) {
-    return this.users.updateMe(user.userId, dto);
-  }
-
   @Get(':id/avatar')
-  async getAvatar(@Param('id') id: string, @Res() response: Response) {
-    const avatar = await this.users.getAvatar(Number(id));
+  async getAvatar(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+    const avatar = await this.users.getAvatar(id);
     response.type(avatar.mime).send(avatar.data);
   }
 

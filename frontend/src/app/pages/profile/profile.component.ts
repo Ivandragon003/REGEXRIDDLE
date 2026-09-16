@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Challenge, ChallengesApiService } from '../../core/api/challenges-api.service';
 import { errorMessage } from '../../core/api/api.constants';
@@ -16,7 +15,7 @@ interface Feedback {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AvatarComponent],
+  imports: [CommonModule, RouterLink, AvatarComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
@@ -31,18 +30,13 @@ export class ProfileComponent {
   myChallenges = signal<Challenge[] | null>(null);
   isLoading = signal(true);
 
-  username = signal('');
-  email = signal('');
   feedback = signal<Feedback | null>(null);
-  saving = signal(false);
   uploading = signal(false);
 
   constructor() {
     this.userApi.getMe().subscribe({
       next: (profile) => {
         this.profile.set(profile);
-        this.username.set(profile.username);
-        this.email.set(profile.email);
         this.isLoading.set(false);
       },
     });
@@ -53,23 +47,6 @@ export class ProfileComponent {
 
   triggerFileInput(): void {
     this.fileInput()?.nativeElement.click();
-  }
-
-  handleSave(): void {
-    this.feedback.set(null);
-    this.saving.set(true);
-    this.userApi.updateMe({ username: this.username() }).subscribe({
-      next: (updated) => {
-        this.auth.updateUser({ username: updated.username });
-        this.profile.set(updated);
-        this.saving.set(false);
-        this.feedback.set({ type: 'success', text: 'Profilo aggiornato con successo.' });
-      },
-      error: (err) => {
-        this.saving.set(false);
-        this.feedback.set({ type: 'error', text: errorMessage(err, 'Aggiornamento non riuscito') });
-      },
-    });
   }
 
   handleAvatarChange(event: Event): void {

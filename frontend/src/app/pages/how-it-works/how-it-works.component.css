@@ -26,21 +26,6 @@
   font-size: 1.1rem;
 }
 
-.demo {
-  margin-bottom: 2rem;
-}
-
-.examples {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin: 1rem 0 1.5rem;
-}
-
-.demoResult {
-  margin-top: 1rem;
-}
-
 .scoring .list {
   margin: 1rem 0;
   padding-left: 1.2rem;

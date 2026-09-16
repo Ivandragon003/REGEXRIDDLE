@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-
-const DEMO_REGEX = '^[a-z]+$';
 
 interface Step {
   n: number;
@@ -14,14 +11,11 @@ interface Step {
 @Component({
   selector: 'app-how-it-works',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './how-it-works.component.html',
   styleUrl: './how-it-works.component.css',
 })
 export class HowItWorksComponent {
-  demoRegex = DEMO_REGEX;
-  input = signal('');
-
   steps: Step[] = [
     {
       n: 1,
@@ -45,17 +39,4 @@ export class HowItWorksComponent {
     },
   ];
 
-  get matches(): boolean | null {
-    const value = this.input();
-    if (!value) return null;
-    try {
-      return new RegExp(DEMO_REGEX).test(value);
-    } catch {
-      return null;
-    }
-  }
-
-  onInputChange(value: string): void {
-    this.input.set(value);
-  }
 }

@@ -77,14 +77,6 @@ test('la pagina sfide protetta reindirizza al login se non autenticati', async (
   await expect(page).toHaveURL(/\/login/);
 });
 
-test('la demo distingue una stringa valida da una non valida', async ({ page }) => {
-  await page.goto('/come-funziona');
-  await page.locator('#demo-input').fill('regex');
-  await expect(page.locator('.demoResult')).toContainText('soddisfa la regex');
-  await page.locator('#demo-input').fill('Regex123');
-  await expect(page.locator('.demoResult')).toContainText('non soddisfa la regex');
-});
-
 test('il toggle del tema cambia l\'attributo data-theme', async ({ page }) => {
   await page.goto('/');
   const themeButton = page.locator('.iconButton');

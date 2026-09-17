@@ -107,7 +107,7 @@
             <span class="muted" style="font-size: 0.8rem">{{ controls.positive().length }}/{{ maxControl }}</span>
           </div>
           <p class="muted" style="font-size: 0.85rem">Devono soddisfare la regex.</p>
-          <div class="controlItem" *ngFor="let value of controls.positive(); let i = index">
+          <div class="controlItem" *ngFor="let value of controls.positive(); let i = index; trackBy: trackByIndex">
             <input
               class="input mono"
               [class.has-error]="controlStatus(value, true) === false"
@@ -140,7 +140,7 @@
             <span class="muted" style="font-size: 0.8rem">{{ controls.negative().length }}/{{ maxControl }}</span>
           </div>
           <p class="muted" style="font-size: 0.85rem">NON devono soddisfare la regex.</p>
-          <div class="controlItem" *ngFor="let value of controls.negative(); let i = index">
+          <div class="controlItem" *ngFor="let value of controls.negative(); let i = index; trackBy: trackByIndex">
             <input
               class="input mono"
               [class.has-error]="controlStatus(value, false) === false"

@@ -70,6 +70,10 @@ export class CreateChallengeComponent {
     );
   }
 
+  trackByIndex(index: number): number {
+    return index;
+  }
+
   controlStatus(value: string, shouldMatch: boolean): boolean | null {
     if (!this.regexValid || value === '') return null;
     return this.compiledRegex()!.test(value) === shouldMatch;

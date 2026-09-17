@@ -17,13 +17,6 @@
   animation: fadeInUp 0.25s ease;
 }
 
-.kicker {
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  margin: 0 0 0.25rem;
-}
-
 .title {
   margin: 0 0 1.5rem;
   font-size: 1.6rem;

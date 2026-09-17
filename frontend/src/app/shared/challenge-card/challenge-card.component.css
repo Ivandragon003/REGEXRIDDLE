@@ -11,15 +11,6 @@
   margin-bottom: 0.75rem;
 }
 
-.tag {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--accent2);
-  background: var(--accent2-tint);
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-}
-
 .title {
   font-size: 1.15rem;
   margin: 0 0 0.4rem;

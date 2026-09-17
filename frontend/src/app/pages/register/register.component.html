@@ -11,7 +11,9 @@
       <label class="label" for="username">Username</label>
       <input
         id="username"
+        name="username"
         class="input"
+        autocomplete="username"
         [class.has-error]="form.controls.username.invalid && form.controls.username.touched"
         formControlName="username"
       />
@@ -26,8 +28,10 @@
       <label class="label" for="email">Email</label>
       <input
         id="email"
+        name="email"
         type="email"
         class="input"
+        autocomplete="email"
         [class.has-error]="form.controls.email.invalid && form.controls.email.touched"
         formControlName="email"
       />
@@ -38,11 +42,13 @@
     </div>
 
     <div class="field">
-      <label class="label" for="password">Password</label>
+      <label class="label" for="register-password">Password</label>
       <input
-        id="password"
+        id="register-password"
+        name="new-password"
         type="password"
         class="input"
+        autocomplete="new-password"
         [class.has-error]="form.controls.password.invalid && form.controls.password.touched"
         formControlName="password"
       />
@@ -53,11 +59,13 @@
     </div>
 
     <div class="field">
-      <label class="label" for="confirmPassword">Conferma password</label>
+      <label class="label" for="confirm-password">Conferma password</label>
       <input
-        id="confirmPassword"
+        id="confirm-password"
+        name="confirm-password"
         type="password"
         class="input"
+        autocomplete="new-password"
         [class.has-error]="form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched"
         formControlName="confirmPassword"
       />

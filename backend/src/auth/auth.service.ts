@@ -14,6 +14,7 @@ export interface AuthResponse {
   token: string;
   username: string;
   userId: number;
+  avatarUrl: string | null;
 }
 
 @Injectable()
@@ -55,6 +56,11 @@ export class AuthService {
 
   private buildResponse(user: User): AuthResponse {
     const token = this.jwt.sign({ sub: user.id });
-    return { token, username: user.username, userId: user.id };
+    return {
+      token,
+      username: user.username,
+      userId: user.id,
+      avatarUrl: user.avatarMime ? `/api/users/${user.id}/avatar` : null,
+    };
   }
 }

@@ -7,6 +7,7 @@ export interface LoginResponse {
   token: string;
   userId: number;
   username: string;
+  avatarUrl: string | null;
 }
 
 export interface LoginPayload {

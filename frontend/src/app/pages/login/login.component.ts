@@ -40,7 +40,11 @@ export class LoginComponent {
     this.isSubmitting.set(true);
     this.authApi.login(this.form.getRawValue()).subscribe({
       next: (res) => {
-        this.auth.login(res.token, { userId: res.userId, username: res.username });
+        this.auth.login(res.token, {
+          userId: res.userId,
+          username: res.username,
+          avatarUrl: res.avatarUrl,
+        });
         this.isSubmitting.set(false);
         this.router.navigateByUrl(this.redirectTo, { replaceUrl: true });
       },

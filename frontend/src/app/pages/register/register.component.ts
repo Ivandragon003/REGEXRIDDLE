@@ -63,7 +63,11 @@ export class RegisterComponent {
     const { username, email, password } = this.form.getRawValue();
     this.authApi.register({ username, email, password }).subscribe({
       next: (res) => {
-        this.auth.login(res.token, { userId: res.userId, username: res.username });
+        this.auth.login(res.token, {
+          userId: res.userId,
+          username: res.username,
+          avatarUrl: res.avatarUrl,
+        });
         this.isSubmitting.set(false);
         this.router.navigate(['/'], { replaceUrl: true });
       },

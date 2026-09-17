@@ -3,81 +3,23 @@
     <div class="hero-copy">
       <h1 id="landing-title" class="title">
         Indovina la<br />
-        <span class="accent">regex</span
-        ><span class="cursor-blink" aria-hidden="true"></span>
+        <span class="accent">regex</span><span class="cursor-blink" aria-hidden="true"></span>
       </h1>
       <p class="subtitle">
-        Sfida i tuoi colleghi con enigmi sulle espressioni regolari. Trova il
-        pattern segreto, un tentativo alla volta.
+        Sfida i tuoi avversari con enigmi sulle espressioni regolari. Trova il pattern segreto,
+        un tentativo alla volta.
       </p>
       <div class="ctas">
-        <a routerLink="/sfide" class="btn btn-primary"
-          >Esplora le sfide <span aria-hidden="true">→</span></a
-        >
+        <a routerLink="/sfide" class="btn btn-primary">Esplora le sfide <span aria-hidden="true">→</span></a>
         <a routerLink="/come-funziona" class="btn btn-ghost">Come funziona</a>
       </div>
-      <p class="hero-note">
-        <span aria-hidden="true">●</span> Nessuna installazione. Solo logica.
-      </p>
     </div>
-
-    <aside
-      class="challenge-preview"
-      aria-label="Anteprima della schermata di una sfida"
-    >
-      <div class="preview-topbar">
-        <span class="preview-label">ANTEPRIMA SFIDA</span>
-        <span class="preview-status">● pubblica</span>
-      </div>
-      <div class="preview-body">
-        <h2>Indirizzo email semplice</h2>
-        <p class="preview-description">
-          Trova la regex che riconosce indirizzi email nel formato richiesto.
-        </p>
-
-        <div class="preview-examples" aria-label="Esempi della sfida">
-          <div>
-            <span class="badge badge-success">✓ Soddisfa</span>
-            <code>utente&#64;esempio.it</code>
-          </div>
-          <div>
-            <span class="badge badge-danger">✗ Non soddisfa</span>
-            <code>utente.example.it</code>
-          </div>
-        </div>
-
-        <div class="preview-attempt">
-          <label for="preview-regex">Proponi una regex</label>
-          <input
-            id="preview-regex"
-            class="input mono"
-            placeholder="^...$"
-            disabled
-          />
-          <p>Risultato di un tentativo</p>
-          <div class="preview-progress-row">
-            <span>Stringhe positive</span><strong>1/2</strong>
-          </div>
-          <div class="progress">
-            <span class="progress-bar success preview-progress-positive"></span>
-          </div>
-          <div class="preview-progress-row">
-            <span>Stringhe negative escluse</span><strong>3/3</strong>
-          </div>
-          <div class="progress">
-            <span class="progress-bar success preview-progress-negative"></span>
-          </div>
-        </div>
-      </div>
-    </aside>
   </section>
 
   <section class="benefits container" aria-labelledby="benefits-title">
     <div class="section-intro">
       <p class="section-label">IL GIOCO, IN BREVE</p>
-      <h2 id="benefits-title">
-        Un piccolo enigma.<br /><span>Una grande soddisfazione.</span>
-      </h2>
+      <h2 id="benefits-title">Un piccolo enigma.<br /><span>Una grande soddisfazione.</span></h2>
     </div>
     <div class="features">
       <article class="feature" *ngFor="let f of features; let index = index">

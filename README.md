@@ -21,7 +21,6 @@ Docker crea e avvia:
 
 - frontend Angular su http://localhost:5173;
 - API NestJS su http://localhost:8080/api;
-- documentazione Swagger su http://localhost:8080/swagger-ui;
 - database PostgreSQL esposto localmente sulla porta `5433`.
 
 Il primo avvio crea lo schema del database e carica automaticamente i dati dimostrativi inclusi
@@ -95,4 +94,3 @@ Con backend e frontend in esecuzione, oppure dopo l'avvio con Docker, esegui:
 cd frontend
 npm install
 npm run test:e2e
-

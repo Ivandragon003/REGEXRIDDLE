@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, ElementRef, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth.service';
-import { ThemeService } from '../core/theme.service';
 import { AvatarComponent } from '../shared/avatar/avatar.component';
 
 @Component({
@@ -17,8 +16,6 @@ export class NavbarComponent {
   private elementRef = inject(ElementRef);
 
   auth = inject(AuthService);
-  themeService = inject(ThemeService);
-
   menuOpen = signal(false);
   dropdownOpen = signal(false);
 

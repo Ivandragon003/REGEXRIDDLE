@@ -72,16 +72,29 @@ test('la registrazione crea un utente e avvia la sessione', async ({ page }) => 
   await expect(page.locator('.userButton')).toContainText(user.username);
 });
 
+test('un utente autenticato può creare una sfida', async ({ page }) => {
+  await page.goto('/login');
+  await page.locator('#identifier').fill('bruno_pattern');
+  await page.locator('#password').fill('Password123!');
+  await page.locator('form').getByRole('button', { name: 'Accedi' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('.userButton')).toContainText('bruno_pattern');
+
+  const challengeTitle = `Sfida E2E ${Date.now()}`;
+  await page.goto('/sfide/nuova');
+  await page.locator('#title').fill(challengeTitle);
+  await page.locator('#secretRegex').fill('^[a-z]+$');
+  await page.locator('#exampleMatch').fill('abc');
+  await page.locator('#exampleNoMatch').fill('123');
+  await page.getByRole('textbox', { name: 'Positive 1' }).fill('xyz');
+  await page.getByRole('textbox', { name: 'Negative 1' }).fill('456');
+  await page.getByRole('button', { name: 'Crea sfida' }).click();
+
+  await expect(page).toHaveURL(/\/sfide\/[^/]+$/);
+  await expect(page.getByRole('heading', { name: challengeTitle })).toBeVisible();
+});
+
 test('la pagina sfide protetta reindirizza al login se non autenticati', async ({ page }) => {
   await page.goto('/sfide/nuova');
   await expect(page).toHaveURL(/\/login/);
-});
-
-test('il toggle del tema cambia l\'attributo data-theme', async ({ page }) => {
-  await page.goto('/');
-  const themeButton = page.locator('.iconButton');
-  const before = await page.locator('html').getAttribute('data-theme');
-  await themeButton.click();
-  const after = await page.locator('html').getAttribute('data-theme');
-  expect(before).not.toBe(after);
 });

@@ -2,7 +2,7 @@
   display: block;
 }
 
-/* The navbar is part of normal document flow, so this starts directly beneath it. */
+/* La barra di navigazione è nel flusso normale del documento, quindi questa sezione inizia subito sotto. */
 .landing-page {
   position: relative;
   isolation: isolate;

@@ -36,6 +36,7 @@ export class AuthService {
       data: {
         username: dto.username,
         email: dto.email,
+        // Salva un hash della password, mai la password in chiaro.
         passwordHash: await bcrypt.hash(dto.password, 10),
       },
     });
@@ -48,6 +49,7 @@ export class AuthService {
         OR: [{ username: dto.identifier }, { email: dto.identifier }],
       },
     });
+    // Verifica la password inserita confrontandola con l'hash salvato.
     if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
       throw new UnauthorizedException('Credenziali non valide');
     }
@@ -55,6 +57,7 @@ export class AuthService {
   }
 
   private buildResponse(user: User): AuthResponse {
+    // Firma il JWT che identifica l'utente autenticato.
     const token = this.jwt.sign({ sub: user.id });
     return {
       token,

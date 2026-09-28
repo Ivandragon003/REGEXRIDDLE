@@ -67,6 +67,7 @@ export class UsersService {
     if (!file || !file.buffer) {
       throw new BadRequestException('Nessun file caricato');
     }
+    // Verifica il formato reale del file dai magic bytes.
     const mime = detectImageMime(file.buffer);
     if (!mime) {
       throw new BadRequestException('Formato non supportato (ammessi: JPEG, PNG, GIF)');

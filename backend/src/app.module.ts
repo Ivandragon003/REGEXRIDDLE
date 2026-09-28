@@ -12,6 +12,7 @@ import { validateEnv } from './common/env.validation';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
+    // Limita le richieste per ridurre spam e DoS semplici.
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     PrismaModule,
     AuthModule,

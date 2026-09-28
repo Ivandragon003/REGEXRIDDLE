@@ -13,6 +13,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    // Evita di esporre dettagli tecnici degli errori interni al client.
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Errore interno del server';
 

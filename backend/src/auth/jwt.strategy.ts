@@ -12,7 +12,9 @@ interface JwtPayload {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(config: ConfigService) {
     super({
+      // Legge il token dall'header Authorization: Bearer <token>.
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // Rifiuta automaticamente i token scaduti.
       ignoreExpiration: false,
       secretOrKey: config.get<string>('JWT_SECRET') as string,
     });

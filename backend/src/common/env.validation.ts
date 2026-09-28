@@ -1,5 +1,6 @@
 export function validateEnv(config: Record<string, unknown>): Record<string, unknown> {
   const jwtSecret = config.JWT_SECRET;
+  // Impedisce l'avvio con un secret JWT assente o troppo debole.
   if (typeof jwtSecret !== 'string' || jwtSecret.trim().length < 32) {
     throw new Error(
       'JWT_SECRET mancante o troppo corto: impostare una chiave di almeno 32 caratteri in backend/.env',

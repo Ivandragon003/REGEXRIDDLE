@@ -8,6 +8,7 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Aggiunge header HTTP di sicurezza al backend.
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -16,11 +17,13 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  // Accetta chiamate browser solo dal frontend autorizzato.
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
+  // Rifiuta dati non validi e campi non previsti nei DTO.
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

@@ -33,6 +33,7 @@ export class UsersController {
 
   @Post('me/avatar')
   @UseGuards(JwtAuthGuard)
+  // Limita la dimensione dell'avatar per evitare upload troppo pesanti.
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }))
   uploadAvatar(
     @UploadedFile() file: Express.Multer.File,

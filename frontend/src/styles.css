@@ -39,6 +39,18 @@ body {
 
 body {
   background: var(--bg-primary);
+  background-image:
+    radial-gradient(
+      1200px 600px at 80% -10%,
+      rgba(0, 255, 136, 0.06),
+      transparent
+    ),
+    radial-gradient(
+      900px 500px at -10% 10%,
+      rgba(0, 153, 255, 0.05),
+      transparent
+    );
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
   line-height: 1.6;
